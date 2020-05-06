@@ -18,12 +18,12 @@ export default function (id = generate()) {
 	canvasWidth = { },
 	canvasHeight = { },
     }) {
-        console.log(`::: P5Wrapper(${id}) component has been re-rendered`)
+        /* console.log(`::: P5Wrapper(${id}) component has been re-rendered`) */
 
         const sketchContainer = useRef(null)
 
         useEffect(() => {
-            console.log(`::: P5Wrapper(${id})/useEffect()`)
+            /* console.log(`::: P5Wrapper(${id})/useEffect()`) */
             canvas = new window.p5(sketch, sketchContainer.current)
             canvas.state = state
             canvas.dispatch = dispatch
@@ -33,13 +33,11 @@ export default function (id = generate()) {
 	    canvas.canvasHeight = canvasHeight
 	    
             return () => {
-                console.log(`::: P5Wrapper(${id})/useEffect.return()`)
+                /* console.log(`::: P5Wrapper(${id})/useEffect.return()`) */
                 canvas.remove()
             }
-	    
-        }, [dispatch, sketch, state, audioFile, canvasWidth, canvasHeight])
-
-	
+	},
+		  [dispatch, sketch, state, audioFile, canvasWidth, canvasHeight])
 	
         return (
             <div ref={sketchContainer} className="section">

@@ -25,8 +25,8 @@ export default function (s) {
 	} else {
 	    strokeVal = 50
 	    offset = 1.1
-	    s.mySound.setVolume(0, 0.01)
-	    s.mySound.pause(0.03)
+	    s.mySound.setVolume(0, 0.1)
+	    s.mySound.pause(0.15)
 	    highlighted = false
 	    
 	}

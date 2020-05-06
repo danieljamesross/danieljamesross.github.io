@@ -24,7 +24,7 @@ export default function (s) {
 	    strokeVal = 50
 	    offset = 1.1
 	    s.mySound.setVolume(0, 0.1)
-	    s.mySound.pause(0.11)
+	    s.mySound.pause(0.15)
 	    highlighted = false
 	}
 	s.dispatch({ type: 'SET_P5_STROKE' }, { type: 'TOGGLE_PLAY_AUDIO' })
