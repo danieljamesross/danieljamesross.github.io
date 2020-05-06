@@ -1,0 +1,107 @@
+html {
+    background-color: rgb(10,25,48);
+}
+
+.App {
+    text-align: center;
+    font-family: Verdana, Geneva, sans-serif;
+    /* "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
+    background-color: rgb(10,25,48);
+    color: rgba(255,255,255,0.6);
+    align-items: center;
+    justify-content: center;
+}
+
+
+h1 {
+    font-size: 4vmin;
+    font-weight: normal;
+}
+
+h2 {
+    font-size: 2vmin;
+    font-weight: normal;
+}
+
+
+
+.header {
+    max-width: 500px;
+    min-width: 200px;
+    font-weight: normal;
+    font-variant-caps: all-small-caps;
+    /* width: 400px; */
+    text-align: center;
+    margin: auto auto;
+    padding: 5px 10px;
+    border-radius: 0px;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    flex-flow: row wrap;
+}
+
+.footer {
+    width: 200px;
+    max-width: 1024px;
+    text-align: center;
+    font-size: 24px;
+    margin: auto auto;
+    padding: 10px;
+    border-radius: 0px;
+    vertical-align: middle;
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: space-evenly;
+}
+
+
+.thanks {
+    max-width: 1024px;
+    text-align: center;
+    font-size: 2vmin;
+    margin: auto auto;
+    padding: 10px;
+    border-radius: 0px;
+    vertical-align: middle;
+    align-items: center;
+    display: flex;
+    flex-flow: row wrap;
+    justify-content: center;
+}
+
+a, faIcon {
+    color: rgba(234,176,26,0.6);
+    text-decoration: none;
+}
+
+a:hover, icon:hover {
+    color: rgba(234,176,26,1);
+    text-decoration: none;
+}
+
+.section {
+    margin: auto auto;
+    padding: 5px 10px;
+    border-radius: 0px;
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.section-content {
+    display: flex;
+    justify-content: space-around;
+    vertical-align: middle;
+}
+
+
+
+
+
