@@ -33,53 +33,53 @@ export default function Section2() {
             <div className="section section-content">
 		{sketchHL1 && (
 		    <P5Wrapper1
-		    dispatch={dispatch}
-		    sketch={sketchHLSrc}
-		    state={{ stroked, playAudio }}
-		    audioFile={["./audio/clm-lids.ogg", "./audio/clm-lids.mp3"]}
-		    canvasWidth="100"
-		    canvasHeight="300"
+			dispatch={dispatch}
+			sketch={sketchHLSrc}
+			state={{ stroked, playAudio }}
+			audioFile={["./audio/clm-lids.ogg", "./audio/clm-lids.mp3" , "./audio/clm-lids.m4a"]}
+			canvasWidth="100"
+			canvasHeight="300"
                     />
 		)}
 		{sketchVL1 && (
 		    <P5Wrapper3
-			dispatch={dispatch}
-			sketch={sketchVLSrc}
-			state={{ stroked , playAudio }}
-			audioFile={["./audio/sferics.mp3", "./audio/sferics.ogg"]}
-			canvasWidth="200"
-			canvasHeight="100"
+		    dispatch={dispatch}
+		    sketch={sketchVLSrc}
+		    state={{ stroked , playAudio }}
+		    audioFile={["./audio/sferics.mp3", "./audio/sferics.ogg", "./audio/sferics.m4a"]}
+		    canvasWidth="200"
+		    canvasHeight="100"
 		    />
 		)}
 		{sketchCC1 && (
 		    <P5Wrapper2
-			dispatch={dispatch}
-			sketch={sketchCCSrc}
-			state={{ stroked , playAudio }}
-			audioFile={["./audio/choir.mp3", "./audio/choir.ogg"]}
-			canvasWidth="200"
-			canvasHeight="200"
+		    dispatch={dispatch}
+		    sketch={sketchCCSrc}
+		    state={{ stroked , playAudio }}
+		    audioFile={["./audio/choir.mp3", "./audio/choir.ogg", "./audio/choir.m4a"]}
+		    canvasWidth="200"
+		    canvasHeight="200"
 		    />
 		)}
 
 		{sketchVL2 && (
 		    <P5Wrapper3
-		    dispatch={dispatch}
-		    sketch={sketchVLSrc}
-		    state={{ stroked , playAudio }}
-		    audioFile={["./audio/sferics.mp3", "./audio/sferics.ogg"]}
-		    canvasWidth="200"
-		    canvasHeight="100"
+			dispatch={dispatch}
+			sketch={sketchVLSrc}
+			state={{ stroked , playAudio }}
+			audioFile={["./audio/sferics.mp3", "./audio/sferics.ogg", "./audio/sferics.m4a"]}
+			canvasWidth="200"
+			canvasHeight="100"
 		    />
 		)}
 		{sketchHL2 && (
 		    <P5Wrapper2
-		    dispatch={dispatch}
-		    sketch={sketchHLSrc}
-		    state={{ stroked , playAudio }}
-		    audioFile={["./audio/clm-lids.ogg", "./audio/clm-lids.mp3"]}
-		    canvasWidth="100"
-		    canvasHeight="300"
+			dispatch={dispatch}
+			sketch={sketchHLSrc}
+			state={{ stroked , playAudio }}
+			audioFile={["./audio/clm-lids.ogg", "./audio/clm-lids.mp3", "./audio/clm-lids.m4a"]}
+			canvasWidth="100"
+			canvasHeight="300"
 		    />
 		)}
 

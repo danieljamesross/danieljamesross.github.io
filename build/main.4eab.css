@@ -30,7 +30,7 @@ h2 {
 
 
 .header {
-    max-width: 500px;
+    max-width: 550px;
     min-width: 200px;
     font-weight: normal;
     font-variant-caps: all-small-caps;
@@ -141,15 +141,18 @@ a:hover, icon:hover {
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
+    -ms-flex-line-pack: center;
+        align-content: center;
     -ms-flex-pack: distribute;
         justify-content: space-around;
     vertical-align: middle;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
 }
 
 
-
-
-
-
-
-/*# sourceMappingURL=main.26f6.css.map*/
+/*# sourceMappingURL=main.4eab.css.map*/

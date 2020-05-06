@@ -34,7 +34,7 @@ export default function (s) {
     }
 
     s.preload = () => {
-	s.soundFormats('mp3', 'ogg')
+        s.soundFormats('mp3', 'ogg', 'm4a')
 	s.mySound = s.loadSound(s.audioFile)
     }
 

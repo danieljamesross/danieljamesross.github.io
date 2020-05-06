@@ -30,7 +30,7 @@ export default function (s) {
 	s.dispatch({ type: 'SET_P5_STROKE' }, { type: 'TOGGLE_PLAY_AUDIO' })
     }
     s.preload = () => {
-        s.soundFormats('mp3', 'ogg')
+        s.soundFormats('mp3', 'ogg', 'm4a')
         s.mySound = s.loadSound(s.audioFile)
     }
     
