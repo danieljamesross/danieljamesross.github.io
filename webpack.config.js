@@ -12,7 +12,7 @@ const STORAGE = path.resolve(__dirname, '__storage__')
 const EXCLUDE_DEFAULT = [NODE_MODULES, EXTERNALS, STORAGE]
 
 const SRC = path.resolve(__dirname, 'src')
-const DIST = path.resolve(__dirname, 'build')
+const DIST = path.resolve(__dirname, 'build/www')
 
 const NODE_ENV = process.env.NODE_ENV
 const MODE = NODE_ENV !== 'development' ? 'production' : 'development'
@@ -84,6 +84,10 @@ const config = {
         }),
         new CopyWebpackPlugin(
             [
+                {
+                    from: SRC + '/assets/img/favicon.png',
+                    to: DIST,
+                },
                 {
                     from: SRC + '/assets/img',
                     to: DIST + '/img',
