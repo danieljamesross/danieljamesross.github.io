@@ -3,7 +3,8 @@ html {
 }
 
 .App {
-    text-align: center;
+    /* font-family: Roboto, sans-serif; */
+     text-align: center;
     font-family: Verdana, Geneva, sans-serif;
     /* "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
     background-color: rgb(10,25,48);
@@ -16,6 +17,51 @@ html {
             justify-content: center;
 }
 
+
+
+.github {
+    text-align: center;
+}
+
+.section {
+    margin: auto auto;
+    padding: 5px 10px;
+    border-radius: 0px;
+    vertical-align: middle;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
+    -ms-flex-line-pack: center;
+        align-content: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+}
+
+.section-content {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -ms-flex-line-pack: center;
+        align-content: center;
+    /* justify-content: space-around; */
+    vertical-align: middle;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+}
 
 h1 {
     font-size: 4vmin;
@@ -113,46 +159,5 @@ a:hover, icon:hover {
     text-decoration: none;
 }
 
-.section {
-    margin: auto auto;
-    padding: 5px 10px;
-    border-radius: 0px;
-    vertical-align: middle;
-    -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
-    -webkit-box-pack: center;
-        -ms-flex-pack: center;
-            justify-content: center;
-    -ms-flex-line-pack: center;
-        align-content: center;
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-}
 
-.section-content {
-    display: -webkit-box;
-    display: -ms-flexbox;
-    display: flex;
-    -ms-flex-line-pack: center;
-        align-content: center;
-    -ms-flex-pack: distribute;
-        justify-content: space-around;
-    vertical-align: middle;
-    -webkit-box-orient: horizontal;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: row;
-            flex-direction: row;
-    -ms-flex-wrap: wrap;
-        flex-wrap: wrap;
-}
-
-
-/*# sourceMappingURL=main.4eab.css.map*/
+/*# sourceMappingURL=main.09f6.css.map*/
