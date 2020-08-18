@@ -5,7 +5,7 @@ import AppContent from '../AppContent'
 
 import AppStateProvider from './AppStateProvider'
 
-import './style.css'
+import './App.css'
 
 function App() {
     return (
