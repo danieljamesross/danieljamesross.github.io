@@ -26,6 +26,7 @@ export default function (state, { type, payload }) {
 	    canvasVertHeight: 100,
 	    canvasHorizWidth: 100,
 	    canvasHorizHeight: 300,
+	    showMenu: true,
 	};
 
     case 'SET_SECTION_1':

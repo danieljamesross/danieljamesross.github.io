@@ -6,7 +6,6 @@ import { AppDispatchContext, AppStateContext } from '../App/AppStateProvider';
 export default function Menu() {
     const dispatch = useContext(AppDispatchContext);
     const {
-	startButton,
 	recordButton,
 	clearButton,
 	playButton,
@@ -21,17 +20,7 @@ export default function Menu() {
     return (
 	<>
             <div className="menu">
-		{startButton &&
-		 <button
-		     type="button"
-		     onClick={() => {
-			 dispatch({
-			     type: 'START',
-			 });
-		     }}
-		 >
-		     start
-		 </button>}
+		
 		{recordButton &&
 		 <FontAwesomeIcon icon={faCircle}
 				  className={recordGesture ?

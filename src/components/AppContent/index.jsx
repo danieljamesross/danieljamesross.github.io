@@ -2,6 +2,7 @@ import React, { useContext }from 'react';
 
 import MainSection from '../MainSection';
 import Menu from '../Menu';
+import StartButton from '../StartButton';
 import Slider from '../Slider';
 import Structure from '../Structure';
 import TranslateSketch from '../TranslateSketch';
@@ -11,7 +12,7 @@ import { AppDispatchContext, AppStateContext } from '../App/AppStateProvider';
 
 export default function AppContent() {
     const state  = useContext(AppStateContext);
-    const { showTitle } = state;
+    const { showTitle, showMenu } = state;
     return (
 	<div className="App">
 	    {showTitle && 
@@ -20,8 +21,11 @@ export default function AppContent() {
 		 <h2>Interactive Sound, Algorithmic Composition & Creative Programming</h2>
 	     </div>
 	    }
-	    <Menu />
+	    <StartButton />
 	    <MainSection />
+	    {showMenu &&
+	     <Menu />
+	    }
 	    <TranslateSketch />
 	    <Slider />
 	    <Structure />
