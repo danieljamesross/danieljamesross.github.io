@@ -53,10 +53,10 @@ export default function (s) {
 		const { canvasVertWidth, canvasVertHeight,
 			playGesture, slider, sliderMax, sectionNum } = s.state;
 		
-		let g = s.map(slider, 0, sliderMax, 10, 50);
+		let g = s.map(slider, 0, sliderMax, 10, 20);
 		
 		if(playGesture)	{
-		    s.resizeCanvas(canvasVertWidth + slider, canvasVertHeight + slider);
+		    s.resizeCanvas(canvasVertWidth * rms, canvasVertHeight * rms);
 		    s.background(g + sectionNum, 24, 60 * rms);
 		    if(sectionNum > 5) c.class('vert float');
 		};

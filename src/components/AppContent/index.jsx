@@ -22,11 +22,10 @@ export default function AppContent() {
 	     </div>
 	    }
 	    <StartButton />
-	    <MainSection />
 	    {showMenu &&
 	     <Menu />
 	    }
-	    <TranslateSketch />
+	    <MainSection />
 	    <Slider />
 	    <Structure />
 	    {showTitle &&

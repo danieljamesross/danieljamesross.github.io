@@ -4,7 +4,7 @@ import { AppDispatchContext, AppStateContext } from '../App/AppStateProvider';
 
 import { generate } from 'shortid';
 
-export default function (id = generate()) {
+export default function (id) {
     
     let canvas = null;
 

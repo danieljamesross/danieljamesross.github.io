@@ -17,7 +17,6 @@ export default {
     canvasVertHeight: 100,
     recordGesture: false,
     playGesture: false,
-    recordedData: false,
     playError: false,
     slider: 0,
     showSlider: false,
@@ -26,7 +25,7 @@ export default {
     speedScaler: 1,
     speeds: [1, 1, 1, 1, 1, 1, 0.5, 2, 0.5, 0.25, 2, 0.25, 0.1, 0.1, 1],
     sectionNum: 0,
-    readyToGo: false,
     sliderMax: 100,
     showTitle: true,
+    changeSection: false,
 };

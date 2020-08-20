@@ -98,8 +98,7 @@ a:hover, .faIcon:hover, a:active, .faIcon:active  {
     z-index: 3;
     border: 2px solid rgba(255,255,255,0.6);
     border-radius: 24px;
-    top:80%;
-    position: relative;
+    position: sticky;
 }
 .info {
     min-height: 20px;
@@ -116,14 +115,16 @@ a:hover, .faIcon:hover, a:active, .faIcon:active  {
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    min-height: 300px;
-    max-height: 700px;
+    min-height: 400px;
+    max-height: 800px;
     width: auto;
 }
 
 .horiz, .vert, .circ {
     padding: 0px;
     display: inline-block;
+    position: relative;
+
 }
 
 .circ {
@@ -134,11 +135,10 @@ a:hover, .faIcon:hover, a:active, .faIcon:active  {
     display: none;
 }
 
-.float {
-    position: relative;
-    opacity: 0.5;
-    left:20%;
-}
+/* .float { */
+/*     position: relative; */
+/*     opacity: 0.5; */
+/* } */
 
 .p5Canvas {
     display: inherit;
@@ -212,6 +212,7 @@ button:hover, button:active {
     padding: 0px;
     margin: 0px;
     font-size: 1vmin;
+    text-align: center;
 }
 
 

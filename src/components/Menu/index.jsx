@@ -48,7 +48,7 @@ export default function Menu() {
 		     <input type="checkbox" className="checkbox"
 			    onClick={() =>
 				dispatch({type: 'TOGGLE_SHOW_GESTURE'})}
-		     />Show Gestures</label>}
+		     />Gestures</label>}
 		{clearButton &&
 		 <FontAwesomeIcon icon={faRedo}
 				  className="faIcon clear"

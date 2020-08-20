@@ -14,12 +14,13 @@ function TranslateSketch() {
 	canvasVertHeight,
 	canvasHorizWidth,
 	canvasHorizHeight,
-	g1, g2, g3, g4, g5,
+
 	slider,playGesture,
+	playError,
     } = state;
 
-    const P51X = g1 + '_X';
-    const P51Y = g1 + '_Y';
+    /* const P51X = g1 + '_X';
+     * const P51Y = g1 + '_Y'; */
     // const P52X = g2 + '_X';
     // const P52Y = g2 + '_Y';
     // const P53X = g3 + '_X';
@@ -28,25 +29,40 @@ function TranslateSketch() {
     // const P54Y = g4 + '_Y';
     // const P55X = g5 + '_X';
     // const P55Y = g5 + '_Y';
-    useEffect(() => {
-	let x1 = 0;
-	let y1 = 0;
-	if(playGesture) {
-	    let posX1 = slider % localStorage.getItem(P51X).length;
-	    let posY1 = slider % localStorage.getItem(P51Y).length;
+    /* let x1 = 0;
+     * let y1 = 0;
+     * let translateMessage;
+     * useEffect(() => {
 
-	    x1 = convertRange(posX1,
-			      [0, canvasHorizWidth], [0, window.innerWidth]);
-	    y1 = convertRange(posY1,
-			      [0, canvasHorizHeight], [0, window.innerHeight]);
-	};
+       if(playGesture && !playError && slider % 10 === 0) {
+       let posX1 = slider % localStorage.getItem(P51X).length;
+       let posY1 = slider % localStorage.getItem(P51Y).length;
 
-	dispatch({type: 'MOVE_SKETCH_1',
-		  payload: `translate(${Math.round(x1)}px, ${Math.round(y1)}px)`,
-		 });
-    },[slider, P51X, P51Y, playGesture]);
+       x1 = convertRange(posX1,
+       [0, canvasHorizWidth], [0, window.innerWidth]);
+       y1 = convertRange(posY1,
+       [0, canvasHorizHeight], [0, window.innerHeight]);
+       } else {
+       x1 = 0.;
+       y1 = 0.;
+       }
+       translateMessage = [x1,y1];
+
+     * },[slider, P51X, P51Y, playGesture, playError]); */
     return (
-	    <div></div>
+	<div>
+	    <button
+		type="button"
+		onClick={() =>{
+
+		    dispatch({
+			type: 'INC_SECTION_NUM',
+		    });
+		}}
+	    >
+		inc section
+	    </button>
+	</div>
     );
 };
 
