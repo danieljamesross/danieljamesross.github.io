@@ -36,16 +36,15 @@ export default function MainSection() {
 
     return (
         <div className="section-container">
-	  	    
-		<div className={sketchAudio1 ? "horiz" : "horiz hide"}>
-			<P5Wrapper1
-			dispatch={dispatch}
-			sketch={sketchHorizSrc}
-			state={state}
-			playing={sketchAudio1}
-			classTitle={"horiz"}
-			/>
-		</div>
+	    <div className={sketchAudio1 ? "horiz" : "horiz hide"}>
+		<P5Wrapper1
+		dispatch={dispatch}
+		sketch={sketchHorizSrc}
+		state={state}
+		playing={sketchAudio1}
+		classTitle={"horiz"}
+		/>
+	    </div>
 	    <div className={sketchAudio2 ? "vert" : "vert hide"}>
 		<P5Wrapper2
 		    dispatch={dispatch}

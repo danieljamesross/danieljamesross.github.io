@@ -2,7 +2,7 @@ html {
     background-color: rgb(10,25,48);
 }
 
-.App {
+.App, app-root {
     text-align: center;
     font-family: Verdana, Geneva, sans-serif;
     /* "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
@@ -20,6 +20,11 @@ h1 {
 
 h2 {
     font-size: 2vmin;
+    font-weight: normal;
+}
+
+h3 {
+    font-size: 1vmin;
     font-weight: normal;
 }
 
@@ -103,6 +108,20 @@ a:hover, .faIcon:hover, a:active, .faIcon:active  {
 .info {
     min-height: 20px;
 }
+
+.info-page {
+    position: fixed;
+    margin: auto;
+    width: 50%;
+    padding: 0px 10px 10px;
+    z-index: 4;
+    top: 40%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border: 2px solid rgba(255,255,255,0.6);
+    border-radius: 24px;
+    background-color: rgb(10,25,48);
+}
 .section-container {
     margin: auto auto;
     padding: 5px 10px;
@@ -145,8 +164,8 @@ a:hover, .faIcon:hover, a:active, .faIcon:active  {
 }
 
 button {
-    width:200px;
-    height: 100px;
+    width: 120px;
+    height: 50px;
     background-color: rgba(255,255,255,0.6);
     border: 0px;
     border-radius: 24px;
@@ -259,3 +278,4 @@ input:checked ~ .checkmark {
 /* $gradient-top-left: linear-gradient(225deg, #a31621ff, #33658aff, #86bbd8ff, #819e57ff, #f6ae2dff); */
 /* $gradient-bottom-left: linear-gradient(315deg, #a31621ff, #33658aff, #86bbd8ff, #819e57ff, #f6ae2dff); */
 /* $gradient-radial: radial-gradient(#a31621ff, #33658aff, #86bbd8ff, #819e57ff, #f6ae2dff); */
+
