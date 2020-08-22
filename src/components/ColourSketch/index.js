@@ -21,7 +21,10 @@ function ColourSketch() {
         numSections,
         slider
     } = useContext(AppStateContext);
-    const range = ['#0a1930', '#33648a', '#a21622', '#f6b02c', '#f6ec2c'];
+    const rangeC = ['#0a1930', '#33648a', '#a21622', '#f6b02c', '#f6ec2c'];
+    const rangeH = ['#0a1930', '#a21622', '#33648a', '#f6b02c', '#00e673'];
+    const rangeV = ['#0a1930', '#f6b02c', '#a21622', '#ff4da6', '#33648a'];
+
     const dom = [
         0,
         numSections * 0.25,
@@ -34,9 +37,9 @@ function ColourSketch() {
         // const y1Arr = JSON.parse(localStorage.getItem('sketchAudio1_Y'));
         // const x2Arr = JSON.parse(localStorage.getItem('sketchAudio2_X'));
         // const y3Arr = JSON.parse(localStorage.getItem('sketchAudio3_Y'));
-        const horizColourScale = scaleLinear().domain(dom).range(range);
-        const vertColourScale = scaleLinear().domain(dom).range(range);
-        const circColourScale = scaleLinear().domain(dom).range(range);
+        const horizColourScale = scaleLinear().domain(dom).range(rangeH);
+        const vertColourScale = scaleLinear().domain(dom).range(rangeV);
+        const circColourScale = scaleLinear().domain(dom).range(rangeC);
 
         if (sectionNum > 0) {
             dispatch({

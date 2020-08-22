@@ -30,24 +30,33 @@ function Structure() {
                 y5Arr
             ) {
                 const sA1Play =
-                    x1Arr[sectionNum % x1Arr.length] % 3 === 0 ? false : true;
+                    Math.round(x1Arr[sectionNum % x1Arr.length]) % 3 === 0
+                        ? false
+                        : true;
                 const sA2Play =
-                    x2Arr[sectionNum % x2Arr.length] % 5 === 0 ? false : true;
+                    Math.round(x2Arr[sectionNum % x2Arr.length]) % 3 === 0
+                        ? false
+                        : true;
                 const sA3Play =
-                    x3Arr[sectionNum % x3Arr.length] % 5 === 0 ? false : true;
+                    Math.round(x3Arr[sectionNum % x3Arr.length]) % 3 === 0
+                        ? false
+                        : true;
                 const sA4Play =
-                    x4Arr[sectionNum % x4Arr.length] % 3 === 0 ? false : true;
+                    Math.round(x4Arr[sectionNum % x4Arr.length]) % 3 === 0
+                        ? false
+                        : true;
                 const sA5Play =
-                    x5Arr[sectionNum % x5Arr.length] % 3 === 0 ? false : true;
+                    Math.round(x5Arr[sectionNum % x5Arr.length]) % 3 === 0
+                        ? false
+                        : true;
                 const speed = x3Arr[sectionNum % x3Arr.length] / 300;
-                const sliderM = x3Arr[sectionNum % x3Arr.length];
-                const cW = y3Arr[sectionNum % y3Arr.length] * 1.5;
-                const cH = y3Arr[sectionNum % y3Arr.length] * 1.5;
-                const vW = x2Arr[sectionNum % x2Arr.length] * 3;
-                const vH = y2Arr[sectionNum % y2Arr.length] * 2;
-                const hW = x1Arr[sectionNum % x1Arr.length] * 2;
-                const hH = y1Arr[sectionNum % y1Arr.length] * 3;
-
+                const sliderM = Math.round(x3Arr[sectionNum % x3Arr.length]);
+                const cW = y3Arr[sectionNum % y3Arr.length];
+                const cH = y3Arr[sectionNum % y3Arr.length];
+                const vW = x2Arr[sectionNum % x2Arr.length] * 2;
+                const vH = y2Arr[sectionNum % y2Arr.length] * 1.5;
+                const hW = x1Arr[sectionNum % x1Arr.length] * 1.5;
+                const hH = y1Arr[sectionNum % y1Arr.length] * 2;
                 dispatch({
                     type: 'SET_SECTION',
                     payload: {
@@ -80,14 +89,14 @@ function Structure() {
             dispatch({ type: 'SET_PAUSE_GESTURE' });
         }
         return () => null;
-    }, [sectionNum]);
+    }, [sectionNum, numSections]);
 
     useEffect(() => {
         if (readyToGo && sectionNum > 0) {
             dispatch({ type: 'SET_PLAY_GESTURE' });
         }
         return () => null;
-    }, [readyToGo, sectionNum, numSections]);
+    }, [readyToGo, sectionNum]);
 
     return <></>;
 }
