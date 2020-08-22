@@ -29,23 +29,23 @@ function Structure() {
                 x5Arr &&
                 y5Arr
             ) {
-                const sA1Play =
+                let sA1Play =
                     Math.round(x1Arr[sectionNum % x1Arr.length]) % 3 === 0
                         ? false
                         : true;
-                const sA2Play =
+                let sA2Play =
                     Math.round(x2Arr[sectionNum % x2Arr.length]) % 3 === 0
                         ? false
                         : true;
-                const sA3Play =
+                let sA3Play =
                     Math.round(x3Arr[sectionNum % x3Arr.length]) % 3 === 0
                         ? false
                         : true;
-                const sA4Play =
+                let sA4Play =
                     Math.round(x4Arr[sectionNum % x4Arr.length]) % 3 === 0
                         ? false
                         : true;
-                const sA5Play =
+                let sA5Play =
                     Math.round(x5Arr[sectionNum % x5Arr.length]) % 3 === 0
                         ? false
                         : true;
@@ -57,6 +57,8 @@ function Structure() {
                 const vH = y2Arr[sectionNum % y2Arr.length] * 1.5;
                 const hW = x1Arr[sectionNum % x1Arr.length] * 1.5;
                 const hH = y1Arr[sectionNum % y1Arr.length] * 2;
+                if (!sA1Play && !sA2Play && !sA3Play && !sA4Play && !sA5Play)
+                    sA2Play = true;
                 dispatch({
                     type: 'SET_SECTION',
                     payload: {
