@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import Footer from '../Footer';
 import { AppDispatchContext } from '../App/AppStateProvider';
+
 function Info() {
     const dispatch = useContext(AppDispatchContext);
     return (
@@ -8,13 +9,13 @@ function Info() {
             <h1>LINES</h1>
             <h2>Daniel James Ross, 2020</h2>
             <p className='thanks'>
-                Adapted from
+                With thanks to atorov and his
                 <a
                     href='https://github.com/atorov/react-hooks-p5js'
                     target='_blank'>
-                    &nbsp;react-hooks-p5js.
+                    &nbsp;react-hooks-p5js&nbsp;
                 </a>
-                &nbsp;Thank you, Atorov.
+                repo.
             </p>
             <Footer />
             <button

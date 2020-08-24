@@ -9,11 +9,12 @@ function Slider() {
         playGesture,
         pauseGesture,
         sliderMax,
-        sectionNum
+        sectionNum,
+        numSections
     } = useContext(AppStateContext);
 
     useEffect(() => {
-        if (playGesture && sectionNum < 21 && sectionNum > 0) {
+        if (playGesture && sectionNum < numSections && sectionNum > 0) {
             const id = setInterval(() => {
                 dispatch({
                     type: 'INC_SLIDER_VALUE'
@@ -32,19 +33,3 @@ function Slider() {
 }
 
 export default Slider;
-// <div className="slider">
-// 		{showSlider &&
-//                <input
-//                    type="range"
-//                    min={0}
-//                    max={sliderMax}
-//                    step={1}
-//                    value={slider}
-//                    className="slider"
-//                    onChange={event => dispatch({
-//                        type: 'SET_SLIDER_VALUE',
-//                        payload: +event.target.value,
-//                    })}
-//                />
-// 		}
-//           </div>

@@ -1,7 +1,5 @@
 import hoverSketch from './hoverSketch.js';
 import playSketch from './playSketch.js';
-import touchToStart from './touchToStart.js';
-import sketchTouchStart from './sketchTouchStart.js';
 import posCircle from './posCircle.js';
 export default function (s) {
     s.state = {};
@@ -41,46 +39,39 @@ export default function (s) {
 
     s.draw = () => {
         s.clear();
-        if (!s.p5playing) {
-            s.mySound.stop();
-        } else {
-            if (s.getAudioContext().state === 'suspended') {
-                s.userStartAudio();
-                s.getAudioContext().resume();
+        if (s.getAudioContext().state === 'suspended') {
+            s.userStartAudio();
+            s.getAudioContext().resume();
+        }
+
+        if (s.getAudioContext().state === 'running' && s.p5playing) {
+            handlePlayRecord();
+            const {
+                canvasHorizWidth,
+                canvasHorizHeight,
+                playGesture,
+                horizColour
+            } = s.state;
+
+            if (playGesture) {
+                s.resizeCanvas(canvasHorizWidth * rms, canvasHorizHeight * rms);
+                s.dispatch({ type: 'SET_HORIZ_RMS', payload: rms });
+                s.background(horizColour);
+            }
+            if (!playGesture) {
+                s.resizeCanvas(canvasHorizWidth, canvasHorizHeight);
+                s.clear();
             }
 
-            if (s.getAudioContext().state === 'running') {
-                handlePlayRecord();
-                const {
-                    canvasHorizWidth,
-                    canvasHorizHeight,
-                    playGesture,
-                    horizColour
-                } = s.state;
-
-                if (playGesture) {
-                    s.resizeCanvas(
-                        canvasHorizWidth * rms,
-                        canvasHorizHeight * rms
-                    );
-                    s.dispatch({ type: 'SET_HORIZ_RMS', payload: rms });
-                    s.background(horizColour);
-                }
-                if (!playGesture) {
-                    s.resizeCanvas(canvasHorizWidth, canvasHorizHeight);
-                    s.clear();
-                }
-
-                drawLines();
-                if (s.mySound.isPlaying()) {
-                    moveLines();
-                    const { showGesture } = s.state;
-                    if (showGesture) posCircle(s, posX, posY);
-                    s.mySound.rate(speed);
-                }
-                if (!s.mySound.isPlaying()) {
-                    resetLines();
-                }
+            drawLines();
+            if (s.mySound.isPlaying()) {
+                moveLines();
+                const { showGesture } = s.state;
+                if (showGesture) posCircle(s, posX, posY);
+                s.mySound.rate(speed);
+            }
+            if (!s.mySound.isPlaying()) {
+                resetLines();
             }
         }
     };

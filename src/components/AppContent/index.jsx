@@ -8,7 +8,7 @@ import Structure from '../Structure';
 import ColourSketch from '../ColourSketch';
 import Info from '../Info';
 import Footer from '../Footer';
-//import AppStateProvider from '../App/AppStateProvider';
+
 import { AppDispatchContext, AppStateContext } from '../App/AppStateProvider';
 
 export default function AppContent() {
@@ -17,13 +17,17 @@ export default function AppContent() {
     return (
         <div className='App'>
             {showTitle && (
-                <div className='header'>
-                    <h1>daniel james ross</h1>
-                    <h2>
-                        Interactive Sound, Algorithmic Composition & Creative
-                        Programming
-                    </h2>
-                </div>
+                <>
+                    <div className='header'>
+                        <h1>daniel james ross</h1>
+                    </div>
+                    <div className='header'>
+                        <h2>
+                            Interactive Sound, Algorithmic Composition &
+                            Creative Programming
+                        </h2>
+                    </div>
+                </>
             )}
             <StartButton />
             {showMenu && <Menu />}

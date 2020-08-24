@@ -1,18 +1,22 @@
-import React from 'react'
-import { hot } from 'react-hot-loader'
+import React, { Suspense, lazy } from 'react';
+import { hot } from 'react-hot-loader';
+import Spinner from 'react-bootstrap/Spinner';
+// import AppContent from '../AppContent';
+// import Loader from '../Loader';
+// import AppStateProvider from './AppStateProvider';
 
-import AppContent from '../AppContent'
+import './App.css';
 
-import AppStateProvider from './AppStateProvider'
-
-import './App.css'
-
+const AppContent = lazy(() => import('../AppContent'));
+const AppStateProvider = lazy(() => import('./AppStateProvider'));
 function App() {
     return (
-        <AppStateProvider>
-            <AppContent />
-        </AppStateProvider>
-    )
+        <Suspense fallback={<Spinner />}>
+            <AppStateProvider>
+                <AppContent />
+            </AppStateProvider>
+        </Suspense>
+    );
 }
 
-export default module.hot ? hot(module)(App) : App
+export default module.hot ? hot(module)(App) : App;

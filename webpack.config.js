@@ -5,6 +5,7 @@ const Autoprefixer = require('autoprefixer');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const InterpolateHtmlPlugin = require('interpolate-html-plugin');
 
 const NODE_MODULES = path.resolve(__dirname, 'node_modules');
 const EXTERNALS = path.resolve(__dirname, 'externals');
@@ -96,7 +97,10 @@ const config = {
             {
                 ignore: ['.DS_Store']
             }
-        )
+        ),
+        new InterpolateHtmlPlugin({
+            PUBLIC_URL: 'public'
+        })
     ]
 };
 

@@ -4,7 +4,7 @@ import {
     faPlay,
     faCircle,
     faPause,
-    faRedo,
+    faUndo,
     faTrash,
     faInfo
 } from '@fortawesome/free-solid-svg-icons';
@@ -21,7 +21,8 @@ export default function Menu() {
         playGesture,
         playError,
         checkbox,
-        sectionNum
+        sectionNum,
+        trashed
     } = useContext(AppStateContext);
 
     return (
@@ -55,24 +56,18 @@ export default function Menu() {
                     <FontAwesomeIcon
                         icon={faPause}
                         className='faIcon pause'
-                        onClick={() =>
-                            dispatch({
-                                type: 'SET_PAUSE_GESTURE'
-                            })
-                        }
+                        onClick={() => dispatch({ type: 'SET_PAUSE_GESTURE' })}
                     />
                 )}
                 {checkbox && (
-                    <label className='checkbox'>
-                        <input
-                            type='checkbox'
-                            className='checkbox'
-                            onClick={() =>
-                                dispatch({ type: 'TOGGLE_SHOW_GESTURE' })
-                            }
-                        />
-                        Gestures
-                    </label>
+                    <input
+                        id='check'
+                        type='checkbox'
+                        className='checkbox'
+                        onClick={() =>
+                            dispatch({ type: 'TOGGLE_SHOW_GESTURE' })
+                        }
+                    />
                 )}
                 {clearButton && (
                     <FontAwesomeIcon
@@ -85,9 +80,11 @@ export default function Menu() {
                 )}
                 {clearButton && (
                     <FontAwesomeIcon
-                        icon={faRedo}
+                        icon={faUndo}
                         className='faIcon clear'
-                        onClick={() => window.location.reload()}
+                        onClick={() => {
+                            window.location.reload();
+                        }}
                     />
                 )}
                 {clearButton && (
@@ -95,6 +92,7 @@ export default function Menu() {
                         icon={faTrash}
                         className='faIcon clear'
                         onClick={() => {
+                            dispatch({ type: 'TRASHED' });
                             localStorage.clear();
                         }}
                     />
@@ -108,6 +106,7 @@ export default function Menu() {
                         You must first record a gesture for each sketch.
                     </span>
                 )}
+                {trashed && <span className='error'>Gestures deleted.</span>}
             </div>
         </>
     );

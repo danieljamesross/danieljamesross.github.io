@@ -1,7 +1,5 @@
 import hoverSketch from './hoverSketch.js';
 import playSketch from './playSketch.js';
-import touchToStart from './touchToStart.js';
-import sketchTouchStart from './sketchTouchStart.js';
 import posCircle from './posCircle.js';
 export default function (s) {
     s.state = {};
@@ -42,50 +40,43 @@ export default function (s) {
 
     s.draw = () => {
         s.clear();
-        if (!s.p5playing) {
-            s.mySound.stop();
-        } else {
-            if (s.getAudioContext().state === 'suspended') {
-                s.userStartAudio();
-                s.getAudioContext().resume();
+        if (s.getAudioContext().state === 'suspended') {
+            s.userStartAudio();
+            s.getAudioContext().resume();
+        }
+
+        if (s.getAudioContext().state === 'running' && s.p5playing) {
+            handlePlayRecord(s);
+            const {
+                canvasCircleWidth,
+                canvasCircleHeight,
+                playGesture,
+                circColour
+            } = s.state;
+
+            if (playGesture) {
+                s.resizeCanvas(
+                    canvasCircleWidth * rms,
+                    canvasCircleWidth * rms
+                );
+                s.dispatch({ type: 'SET_CIRC_RMS', payload: rms });
+                s.background(circColour);
             }
+            if (!playGesture) {
+                s.resizeCanvas(canvasCircleWidth, canvasCircleHeight);
+                s.clear();
+                // c.class('circ');
+            }
+            drawCircs();
+            if (s.mySound.isPlaying()) {
+                const { showGesture } = s.state;
+                moveCircs();
 
-            if (s.getAudioContext().state === 'running') {
-                handlePlayRecord(s);
-                const {
-                    canvasCircleWidth,
-                    canvasCircleHeight,
-                    playGesture,
-                    circColour
-                } = s.state;
-
-                // let g = s.map(slider, 0, sliderMax, 10, 20);
-
-                if (playGesture) {
-                    s.resizeCanvas(
-                        canvasCircleWidth * rms,
-                        canvasCircleWidth * rms
-                    );
-                    s.dispatch({ type: 'SET_CIRC_RMS', payload: rms });
-                    s.background(circColour); //g + sectionNum, 24, 60 * rms);
-                    // if(sectionNum > 5) c.class('circ float');
-                }
-                if (!playGesture) {
-                    s.resizeCanvas(canvasCircleWidth, canvasCircleHeight);
-                    s.clear();
-                    // c.class('circ');
-                }
-                drawCircs();
-                if (s.mySound.isPlaying()) {
-                    const { showGesture } = s.state;
-                    moveCircs();
-
-                    if (showGesture) posCircle(s, posX, posY);
-                    s.mySound.rate(speed);
-                }
-                if (!s.mySound.isPlaying()) {
-                    resetCircs();
-                }
+                if (showGesture) posCircle(s, posX, posY);
+                s.mySound.rate(speed);
+            }
+            if (!s.mySound.isPlaying()) {
+                resetCircs();
             }
         }
     };

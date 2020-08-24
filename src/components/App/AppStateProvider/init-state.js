@@ -30,12 +30,10 @@ export default {
     circColour: 'rgb(10,25,48)',
     horizColour: 'rgb(10,25,48)',
     vertColour: 'rgb(10,25,48)',
-    circDom: [0, 300],
-    horizDom: [0, 300],
-    vertDom: [0, 300],
     circRms: 1,
     vertRms: 1,
     horizRms: 1,
-    numSections: 30,
-    infoPage: false
+    numSections: 25,
+    infoPage: false,
+    trashed: false
 };

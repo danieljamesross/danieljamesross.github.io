@@ -1,7 +1,5 @@
 import hoverSketch from './hoverSketch.js';
 import playSketch from './playSketch.js';
-import touchToStart from './touchToStart.js';
-import sketchTouchStart from './sketchTouchStart.js';
 import posCircle from './posCircle.js';
 export default function (s) {
     s.state = {};
@@ -20,7 +18,6 @@ export default function (s) {
     let posY = s.mouseY;
     let c;
 
-    sketchTouchStart(s);
     s.preload = () => {
         s.soundFormats('mp3', 'ogg', 'm4a');
         s.mySound = s.loadSound([
@@ -42,46 +39,38 @@ export default function (s) {
 
     s.draw = () => {
         s.clear();
-        if (!s.p5playing) {
-            s.mySound.stop();
-            s.clear();
-        } else {
-            if (s.getAudioContext().state === 'suspended') {
-                s.userStartAudio();
-                s.getAudioContext().resume();
+        if (s.getAudioContext().state === 'suspended') {
+            s.userStartAudio();
+            s.getAudioContext().resume();
+        }
+
+        if (s.getAudioContext().state === 'running' && s.p5playing) {
+            handlePlayRecord();
+            const {
+                canvasVertWidth,
+                canvasVertHeight,
+                playGesture,
+                vertColour
+            } = s.state;
+
+            if (playGesture) {
+                s.resizeCanvas(canvasVertWidth * rms, canvasVertHeight * rms);
+                s.dispatch({ type: 'SET_VERT_RMS', payload: rms });
+                s.background(vertColour);
             }
-
-            if (s.getAudioContext().state === 'running') {
-                handlePlayRecord();
-                const {
-                    canvasVertWidth,
-                    canvasVertHeight,
-                    playGesture,
-                    vertColour
-                } = s.state;
-
-                if (playGesture) {
-                    s.resizeCanvas(
-                        canvasVertWidth * rms,
-                        canvasVertHeight * rms
-                    );
-                    s.dispatch({ type: 'SET_VERT_RMS', payload: rms });
-                    s.background(vertColour);
-                }
-                if (!playGesture) {
-                    s.resizeCanvas(canvasVertWidth, canvasVertHeight);
-                    s.clear();
-                }
-                drawLines();
-                if (s.mySound.isPlaying()) {
-                    moveLines();
-                    const { showGesture } = s.state;
-                    if (showGesture) posCircle(s, posX, posY);
-                    s.mySound.rate(speed);
-                }
-                if (!s.mySound.isPlaying()) {
-                    resetLines();
-                }
+            if (!playGesture) {
+                s.resizeCanvas(canvasVertWidth, canvasVertHeight);
+                s.clear();
+            }
+            drawLines();
+            if (s.mySound.isPlaying()) {
+                moveLines();
+                const { showGesture } = s.state;
+                if (showGesture) posCircle(s, posX, posY);
+                s.mySound.rate(speed);
+            }
+            if (!s.mySound.isPlaying()) {
+                resetLines();
             }
         }
     };

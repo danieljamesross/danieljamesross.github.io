@@ -55,7 +55,8 @@ export default function (state, { type, payload }) {
                 canvasHorizWidth: 100,
                 canvasHorizHeight: 300,
                 showMenu: true,
-                readyToGo: false
+                readyToGo: false,
+                trashed: false
             };
 
         case 'SET_PLAY_GESTURE':
@@ -69,7 +70,8 @@ export default function (state, { type, payload }) {
                 sectionNum: state.sectionNum === 0 ? 1 : state.sectionNum,
                 readyToGo: false,
                 recordGesture: false,
-                showTitle: false
+                showTitle: false,
+                trashed: false
             };
         case 'SHOW_ERROR':
             return {
@@ -88,6 +90,7 @@ export default function (state, { type, payload }) {
         case 'SET_SECTION':
             return {
                 ...state,
+                trashed: false,
                 ...payload
             };
 
@@ -95,7 +98,8 @@ export default function (state, { type, payload }) {
             return {
                 ...state,
                 recordGesture: !state.recordGesture,
-                playError: false
+                playError: false,
+                trashed: false
             };
         case 'TOGGLE_PLAY_GESTURE':
             return {
@@ -104,6 +108,7 @@ export default function (state, { type, payload }) {
                 playButton: !state.playButton,
                 pauseButton: !state.pauseButton,
                 recordGesture: false,
+                trashed: false,
                 slider: 0
             };
 
@@ -128,7 +133,8 @@ export default function (state, { type, payload }) {
         case 'TOGGLE_SHOW_GESTURE':
             return {
                 ...state,
-                showGesture: !state.showGesture
+                showGesture: !state.showGesture,
+                trashed: false
             };
 
         case 'SLIDER_MAX':
@@ -173,6 +179,11 @@ export default function (state, { type, payload }) {
             return {
                 ...state,
                 infoPage: !state.infoPage
+            };
+        case 'TRASHED':
+            return {
+                ...state,
+                trashed: true
             };
         default:
             return state;

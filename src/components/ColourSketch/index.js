@@ -34,9 +34,6 @@ function ColourSketch() {
     ];
 
     useEffect(() => {
-        // const y1Arr = JSON.parse(localStorage.getItem('sketchAudio1_Y'));
-        // const x2Arr = JSON.parse(localStorage.getItem('sketchAudio2_X'));
-        // const y3Arr = JSON.parse(localStorage.getItem('sketchAudio3_Y'));
         const horizColourScale = scaleLinear().domain(dom).range(rangeH);
         const vertColourScale = scaleLinear().domain(dom).range(rangeV);
         const circColourScale = scaleLinear().domain(dom).range(rangeC);

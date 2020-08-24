@@ -87,8 +87,11 @@ function Structure() {
             return () => null;
         }
         if (sectionNum === numSections) {
-            dispatch({ type: 'END' });
             dispatch({ type: 'SET_PAUSE_GESTURE' });
+            dispatch({ type: 'END' });
+            var audioCtx = new AudioContext();
+            audioCtx.suspend();
+            console.log('ended');
         }
         return () => null;
     }, [sectionNum, numSections]);
