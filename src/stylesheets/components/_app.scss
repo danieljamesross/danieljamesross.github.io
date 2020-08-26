@@ -1,0 +1,15 @@
+@import '../modules/colours';
+@import '../modules/fonts';
+
+html {
+    background-color: $linesBlue;
+}
+
+.App, #app-root, .loader {
+    text-align: center;
+    font-family: $linesFont;
+    /* "Lucida Sans Unicode", "Lucida Grande", sans-serif; */
+    color: $linesWhite;
+    align-items: center;
+    justify-content: center;
+}

@@ -72,7 +72,7 @@ export default function Menu() {
                 {clearButton && (
                     <FontAwesomeIcon
                         icon={faInfo}
-                        className='faIcon info'
+                        className='faIcon clear'
                         onClick={() => {
                             dispatch({ type: 'TOGGLE_INFO' });
                         }}
@@ -100,10 +100,9 @@ export default function Menu() {
             </div>
             <div className='info'>
                 {recordGesture && <span>Recording...</span>}
-                {playGesture && <span>Playing...</span>}
                 {playError && (
                     <span className='error'>
-                        You must first record a gesture for each sketch.
+                        You must first wiggle each sketch.
                     </span>
                 )}
                 {trashed && <span className='error'>Gestures deleted.</span>}

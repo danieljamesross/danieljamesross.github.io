@@ -9,12 +9,12 @@ export default {
     playButton: false,
     pauseButton: false,
     clearButton: false,
-    canvasCircleWidth: 300,
-    canvasCircleHeight: 300,
-    canvasHorizWidth: 100,
-    canvasHorizHeight: 300,
-    canvasVertWidth: 300,
-    canvasVertHeight: 100,
+    // canvasCircleWidth: 300,
+    // canvasCircleHeight: 300,
+    // canvasHorizWidth: 100,
+    // canvasHorizHeight: 300,
+    // canvasVertWidth: 300,
+    // canvasVertHeight: 100,
     recordGesture: false,
     playGesture: false,
     playError: false,
@@ -35,5 +35,6 @@ export default {
     horizRms: 1,
     numSections: 25,
     infoPage: false,
-    trashed: false
+    trashed: false,
+    canvasScaler: window.outerWidth <= 600 ? 0.4 : 1
 };

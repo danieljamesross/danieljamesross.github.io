@@ -46,7 +46,7 @@ function Info() {
                 </a>
                 repo.
             </p>
-            <Footer />
+
             <button
                 type='button'
                 onClick={() => dispatch({ type: 'TOGGLE_INFO' })}>

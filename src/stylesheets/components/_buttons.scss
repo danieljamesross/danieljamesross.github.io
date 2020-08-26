@@ -1,0 +1,57 @@
+@import '../modules/colours';
+
+button {
+    width: 120px;
+    height: 50px;
+    border: 0px;
+    border-radius: 24px;
+    color: $linesBlue;
+    text-transform: uppercase;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+}
+
+button:hover, button:active {
+    background-color:  $linesYellowActive;
+}
+
+.faIcon:active, .faIcon:hover {
+   color:  $linesYellowActive;
+}
+
+.record, .play, .pause, .clear, .checkbox {
+    border: 2px solid $linesBlue;
+    margin: 10px;
+}
+
+.record {
+    color: $linesRed;
+    border-radius: 50%;
+}
+
+.record:active, .record:hover, .recording:active, .recording:hover {
+    color: $linesRedActive;
+}
+
+.recording {
+    border: 2px solid $linesGreen;
+    border-radius: 50%;
+    color: $linesRed;
+    margin: 10px;
+}
+
+.play:active, .play:hover {
+    color: $linesGreen;
+}
+
+.checkbox {
+    transition: all .2s;
+}
+
+
+input:checked ~ .checkmark {
+  background-color: $linesLightBlue;
+}

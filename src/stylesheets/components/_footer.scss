@@ -1,0 +1,19 @@
+.footer {
+    @include lines-flex;
+    width: 100%;
+    font-size: 2em;
+    margin: auto auto;
+    padding: 10px;
+
+    @media screen and (min-width: 600px) {
+	@include lines-flex;
+	width: 30%;
+	font-size: 1.5em;
+	margin: auto auto;
+	padding: 10px;
+    }
+}
+
+.faIconFooter {
+    padding: 10px;
+}

@@ -39,7 +39,7 @@ export default function (s) {
 
     s.draw = () => {
         s.clear();
-        if (s.getAudioContext().state === 'suspended') {
+        if (s.getAudioContext().state === 'suspended' && s.p5playing) {
             s.userStartAudio();
             s.getAudioContext().resume();
         }

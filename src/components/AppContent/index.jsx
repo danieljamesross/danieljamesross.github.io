@@ -31,12 +31,16 @@ export default function AppContent() {
             )}
             <StartButton />
             {showMenu && <Menu />}
+            {infoPage && (
+                <>
+                    <Info /> <Footer />
+                </>
+            )}
             <MainSection />
             <Slider />
             <Structure />
             <ColourSketch />
             {showTitle && <Footer />}
-            {infoPage && <Info />}
         </div>
     );
 }

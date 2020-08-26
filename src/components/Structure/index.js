@@ -3,10 +3,23 @@ import { AppDispatchContext, AppStateContext } from '../App/AppStateProvider';
 
 function Structure() {
     const dispatch = useContext(AppDispatchContext);
-    const { sectionNum, readyToGo, numSections } = useContext(AppStateContext);
+    const { sectionNum, readyToGo, numSections, canvasScaler } = useContext(
+        AppStateContext
+    );
 
     useEffect(() => {
-        if (sectionNum < numSections && sectionNum > 0) {
+        let cs = null;
+        let w = window.innerWidth;
+        if (sectionNum > 0) {
+            cs = w <= 600 ? 0.7 : 2.5;
+        } else cs = w <= 600 ? 0.4 : 1;
+        dispatch({ type: 'SET_CANVAS_SCALER', payload: cs });
+        console.log(canvasScaler);
+        return () => null;
+    }, [sectionNum]);
+
+    useEffect(() => {
+        if (sectionNum < numSections && sectionNum > 0 && canvasScaler) {
             const x1Arr = JSON.parse(localStorage.getItem('sketchAudio1_X'));
             const y1Arr = JSON.parse(localStorage.getItem('sketchAudio1_Y'));
             const x2Arr = JSON.parse(localStorage.getItem('sketchAudio2_X'));
@@ -29,7 +42,7 @@ function Structure() {
                 x5Arr &&
                 y5Arr
             ) {
-                let sA1Play =
+                const sA1Play =
                     Math.round(x1Arr[sectionNum % x1Arr.length]) % 3 === 0
                         ? false
                         : true;
@@ -37,26 +50,28 @@ function Structure() {
                     Math.round(x2Arr[sectionNum % x2Arr.length]) % 3 === 0
                         ? false
                         : true;
-                let sA3Play =
+                const sA3Play =
                     Math.round(x3Arr[sectionNum % x3Arr.length]) % 3 === 0
                         ? false
                         : true;
-                let sA4Play =
+                const sA4Play =
                     Math.round(x4Arr[sectionNum % x4Arr.length]) % 3 === 0
                         ? false
                         : true;
-                let sA5Play =
+                const sA5Play =
                     Math.round(x5Arr[sectionNum % x5Arr.length]) % 3 === 0
                         ? false
                         : true;
                 const speed = x3Arr[sectionNum % x3Arr.length] / 300;
                 const sliderM = Math.round(x3Arr[sectionNum % x3Arr.length]);
-                const cW = y3Arr[sectionNum % y3Arr.length];
-                const cH = y3Arr[sectionNum % y3Arr.length];
-                const vW = x2Arr[sectionNum % x2Arr.length] * 2;
-                const vH = y2Arr[sectionNum % y2Arr.length] * 1.5;
-                const hW = x1Arr[sectionNum % x1Arr.length] * 1.5;
-                const hH = y1Arr[sectionNum % y1Arr.length] * 2;
+                const cW = y3Arr[sectionNum % y3Arr.length] * canvasScaler;
+                const cH = y3Arr[sectionNum % y3Arr.length] * canvasScaler;
+                const vW = x2Arr[sectionNum % x2Arr.length] * 2 * canvasScaler;
+                const vH =
+                    y2Arr[sectionNum % y2Arr.length] * 1.5 * canvasScaler;
+                const hW =
+                    x1Arr[sectionNum % x1Arr.length] * 1.5 * canvasScaler;
+                const hH = y1Arr[sectionNum % y1Arr.length] * 2 * canvasScaler;
                 if (!sA1Play && !sA2Play && !sA3Play && !sA4Play && !sA5Play)
                     sA2Play = true;
                 dispatch({
@@ -94,7 +109,7 @@ function Structure() {
             console.log('ended');
         }
         return () => null;
-    }, [sectionNum, numSections]);
+    }, [sectionNum, numSections, canvasScaler]);
 
     useEffect(() => {
         if (readyToGo && sectionNum > 0) {

@@ -179,7 +179,7 @@ button:hover, button:active {
 }
 .record, .play, .pause, .clear {
     border: 2px solid rgb(10,25,48);
-    padding: 10p;
+    padding: 10px;
 }
 
 .record {

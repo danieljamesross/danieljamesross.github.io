@@ -20,12 +20,12 @@ export default function (state, { type, payload }) {
                 speedScaler: 1,
                 showTitle: false,
                 playGesture: false,
-                canvasCircleWidth: 300,
-                canvasCircleHeight: 300,
-                canvasVertWidth: 300,
-                canvasVertHeight: 100,
-                canvasHorizWidth: 100,
-                canvasHorizHeight: 300,
+                canvasCircleWidth: 300 * state.canvasScaler,
+                canvasCircleHeight: 300 * state.canvasScaler,
+                canvasVertWidth: 300 * state.canvasScaler,
+                canvasVertHeight: 100 * state.canvasScaler,
+                canvasHorizWidth: 100 * state.canvasScaler,
+                canvasHorizHeight: 300 * state.canvasScaler,
                 showMenu: true
             };
 
@@ -48,12 +48,13 @@ export default function (state, { type, payload }) {
                 sectionNum: 0,
                 showTitle: false,
                 playGesture: false,
-                canvasCircleWidth: 300,
-                canvasCircleHeight: 300,
-                canvasVertWidth: 300,
-                canvasVertHeight: 100,
-                canvasHorizWidth: 100,
-                canvasHorizHeight: 300,
+                canvasCircleWidth: 300 * state.canvasScaler,
+                canvasCircleHeight: 300 * state.canvasScaler,
+                canvasVertWidth: 300 * state.canvasScaler,
+                canvasVertHeight: 100 * state.canvasScaler,
+                canvasHorizWidth: 100 * state.canvasScaler,
+                canvasHorizHeight: 300 * state.canvasScaler,
+                canvasScaler: window.innerWidth <= 600 ? 0.4 : 1,
                 showMenu: true,
                 readyToGo: false,
                 trashed: false
@@ -184,6 +185,17 @@ export default function (state, { type, payload }) {
             return {
                 ...state,
                 trashed: true
+            };
+        case 'SET_CANVAS_SCALER':
+            return {
+                ...state,
+                canvasScaler: payload,
+                canvasCircleWidth: 300 * payload,
+                canvasCircleHeight: 300 * payload,
+                canvasHorizWidth: 100 * payload,
+                canvasHorizHeight: 300 * payload,
+                canvasVertWidth: 300 * payload,
+                canvasVertHeight: 100 * payload
             };
         default:
             return state;

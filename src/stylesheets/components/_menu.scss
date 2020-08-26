@@ -1,0 +1,27 @@
+@import '../modules/colours';
+
+.menu {
+    font-size: 1em;
+    margin: auto auto;
+    padding: 0px 10px 0px;
+    @include lines-flex;
+    min-height: 80px;
+    max-width: 100%;
+    z-index: 3;
+    @include lines-flex;
+    position: static;
+
+    @media screen and (min-width: 600px) {
+	font-size: 1.5em;
+	max-width: 50%;
+    }
+
+}
+
+.info {
+    min-height: 30px;
+}
+
+.error {
+    color: $linesRed;
+}

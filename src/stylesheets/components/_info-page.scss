@@ -1,0 +1,16 @@
+.info-page {
+    width: 80%;
+    margin: auto;
+    font-size: 1em;
+}
+
+@media screen and (min-width: 600px) {
+    .info-page {
+    width: 50%;
+    margin: auto;
+}
+}
+
+p, ol, li {
+    text-align: left;
+}

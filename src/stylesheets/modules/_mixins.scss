@@ -1,0 +1,17 @@
+@import 'colours';
+
+@mixin lines-flex {
+    vertical-align: middle;
+    align-items: center;
+    justify-content: center;
+    align-content: center;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    //wrap;
+}
+
+@mixin lines-border {
+    border: 2px solid $linesWhite;
+    border-radius: 24px;
+}
