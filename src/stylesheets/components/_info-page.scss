@@ -1,14 +1,13 @@
 .info-page {
+    text-align: center;
     width: 80%;
     margin: auto;
     font-size: 1em;
-}
 
-@media screen and (min-width: 600px) {
-    .info-page {
-    width: 50%;
-    margin: auto;
-}
+    @media screen and (min-width: 600px) {
+	width: 50%;
+	margin: auto;
+    }
 }
 
 p, ol, li {

@@ -17,6 +17,7 @@ export default function (s) {
     let posX = s.mouseX;
     let posY = s.mouseY;
     let c;
+    let ac;
 
     s.preload = () => {
         s.soundFormats('mp3', 'ogg', 'm4a');
@@ -31,6 +32,8 @@ export default function (s) {
         const { canvasHorizWidth, canvasHorizHeight } = s.state;
         c = s.createCanvas(canvasHorizWidth, canvasHorizHeight);
         c.class('horiz');
+        ac = s.getAudioContext();
+        s.userStartAudio();
         s.mySound.setLoop(true);
         s.mySound.setVolume(0);
         analyzer = new p5.Amplitude();
@@ -39,13 +42,13 @@ export default function (s) {
 
     s.draw = () => {
         s.clear();
-        if (s.getAudioContext().state === 'suspended' && s.p5playing) {
-            s.userStartAudio();
-            s.getAudioContext().resume();
+
+        if (ac.state === 'suspended' && s.p5playing) {
+            ac.resume();
         }
 
-        if (s.getAudioContext().state === 'running' && s.p5playing) {
-            handlePlayRecord();
+        if (ac.state === 'running' && s.p5playing) {
+            handlePlayRecord(s);
             const {
                 canvasHorizWidth,
                 canvasHorizHeight,

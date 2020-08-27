@@ -9,12 +9,17 @@ function Structure() {
 
     useEffect(() => {
         let cs = null;
-        let w = window.innerWidth;
+        const w = window.innerWidth;
         if (sectionNum > 0) {
-            cs = w <= 600 ? 0.8 : 2.5;
-        } else cs = w <= 600 ? 0.45 : 1;
+            if (w < 600) cs = 0.7;
+            if (w >= 600 && w < 769) cs = 0.8;
+            if (w >= 769) cs = 2.5;
+        } else {
+            if (w < 600) cs = 0.45;
+            if (w >= 600 && w < 769) cs = 0.8;
+            if (w >= 769) cs = 1;
+        }
         dispatch({ type: 'SET_CANVAS_SCALER', payload: cs });
-        console.log(canvasScaler);
         return () => null;
     }, [sectionNum]);
 
@@ -106,7 +111,6 @@ function Structure() {
             dispatch({ type: 'END' });
             var audioCtx = new AudioContext();
             audioCtx.suspend();
-            console.log('ended');
         }
         return () => null;
     }, [sectionNum, numSections, canvasScaler]);

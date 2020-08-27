@@ -36,5 +36,5 @@ export default {
     numSections: 25,
     infoPage: false,
     trashed: false,
-    canvasScaler: window.outerWidth <= 600 ? 0.4 : 1
+    canvasScaler: window.outerWidth <= 768 ? 0.3 : 1
 };

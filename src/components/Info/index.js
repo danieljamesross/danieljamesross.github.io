@@ -6,8 +6,8 @@ function Info() {
     const dispatch = useContext(AppDispatchContext);
     return (
         <div className='info-page'>
-            <h1>LINES</h1>
-            <h2>Daniel James Ross, 2020</h2>
+            <h1 className='info-page'>LINES</h1>
+            <h2 className='info-page'>Daniel James Ross, 2020</h2>
             <p>
                 Lines is a web-based, interactive, audiovisual composition. It
                 invites you to play with five simple line drawings which, when
@@ -19,7 +19,7 @@ function Info() {
                 speeds, sizes, and colours. Each composition is defined by your
                 interaction and is, therefore, unique.
             </p>
-            <h3>Instructions to Play</h3>
+            <h3 className='info-page'>Instructions to Play</h3>
             <ol>
                 <li>Touch the lines to make them wiggle and sing.</li>
                 <li>
@@ -37,7 +37,7 @@ function Info() {
                     on the line sketches.
                 </li>
             </ol>
-            <p className='thanks'>
+            <p>
                 With thanks to atorov and his
                 <a
                     href='https://github.com/atorov/react-hooks-p5js'

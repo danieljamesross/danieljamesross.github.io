@@ -8,8 +8,9 @@ function StartButton() {
             {startButton && (
                 <button
                     type='button'
+                    className='start-button'
                     onClick={() => dispatch({ type: 'START' })}>
-                    play
+                    lines
                 </button>
             )}
         </div>

@@ -15,7 +15,20 @@ button {
     font-size: 1em;
 }
 
-a {
+.start-button {
+    padding: 20px;
+    margin: 20px;
+    border-radius: 50%;
+    font-size: 1.1em;
+    background-color: $linesYellow;
+    width: 100px;
+    height:100px;
+    @media screen and (min-width: 600px) {
+	width: 150px;
+	height: 150px;
+    }
+}
+a, faIcon {
     text-decoration: none;
     color:  $linesYellow;
 }
@@ -24,8 +37,8 @@ button:hover, button:active {
     background-color:  $linesYellowActive;
 }
 
-a:active, a:hover, .faIcon:active, .faIcon:hover {
-   color:  $linesYellowActive;
+a:active, a:hover, .faIcon:active, .faIcon:hover, .faIconFooter:active, .faIconFooter:hover {
+    color:  $linesYellowActive;
 }
 
 .record, .play, .pause, .clear, .checkbox {
@@ -59,5 +72,5 @@ a:active, a:hover, .faIcon:active, .faIcon:hover {
 
 
 input:checked ~ .checkmark {
-  background-color: $linesLightBlue;
+    background-color: $linesLightBlue;
 }
