@@ -11,8 +11,8 @@ function Structure() {
         let cs = null;
         let w = window.innerWidth;
         if (sectionNum > 0) {
-            cs = w <= 600 ? 0.7 : 2.5;
-        } else cs = w <= 600 ? 0.4 : 1;
+            cs = w <= 600 ? 0.8 : 2.5;
+        } else cs = w <= 600 ? 0.45 : 1;
         dispatch({ type: 'SET_CANVAS_SCALER', payload: cs });
         console.log(canvasScaler);
         return () => null;
