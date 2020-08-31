@@ -11,8 +11,8 @@ function Structure() {
         let cs = null;
         const w = window.innerWidth;
         if (sectionNum > 0) {
-            if (w < 600) cs = 0.7;
-            if (w >= 600 && w < 769) cs = 0.8;
+            if (w < 600) cs = 0.9;
+            if (w >= 600 && w < 769) cs = 1.1;
             if (w >= 769) cs = 2.5;
         } else {
             if (w < 600) cs = 0.45;
