@@ -1,6 +1,5 @@
 import React, { useContext, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Switch from 'react-toggle-switch';
 import {
     faPlay,
     faCircle,
@@ -109,7 +108,7 @@ export default function Menu() {
                 {recordGesture && <span>Recording...</span>}
                 {playError && (
                     <span className='error'>
-                        You must first wiggle each sketch.
+                        You must first record a wiggle for each sketch.
                     </span>
                 )}
                 {trashed && <span className='error'>Gestures deleted.</span>}
