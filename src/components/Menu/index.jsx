@@ -1,5 +1,6 @@
 import React, { useContext, useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Switch from 'react-toggle-switch';
 import {
     faPlay,
     faCircle,
@@ -22,7 +23,8 @@ export default function Menu() {
         playError,
         checkbox,
         sectionNum,
-        trashed
+        trashed,
+        showGesture
     } = useContext(AppStateContext);
 
     return (
@@ -59,16 +61,6 @@ export default function Menu() {
                         onClick={() => dispatch({ type: 'SET_PAUSE_GESTURE' })}
                     />
                 )}
-                {checkbox && (
-                    <input
-                        id='check'
-                        type='checkbox'
-                        className='checkbox'
-                        onClick={() =>
-                            dispatch({ type: 'TOGGLE_SHOW_GESTURE' })
-                        }
-                    />
-                )}
                 {clearButton && (
                     <FontAwesomeIcon
                         icon={faInfo}
@@ -96,6 +88,21 @@ export default function Menu() {
                             localStorage.clear();
                         }}
                     />
+                )}
+                {checkbox && (
+                    <>
+                        <label htmlFor='check'>
+                            <input
+                                id='check'
+                                type='checkbox'
+                                className='checkbox'
+                                onClick={() =>
+                                    dispatch({ type: 'TOGGLE_SHOW_GESTURE' })
+                                }
+                            />
+                            Show Gestures
+                        </label>
+                    </>
                 )}
             </div>
             <div className='info'>
