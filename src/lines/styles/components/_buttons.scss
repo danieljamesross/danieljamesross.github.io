@@ -1,0 +1,94 @@
+@use "../colours" as *;
+
+.lines-root {
+  button {
+    width: 120px;
+    height: 50px;
+    border: 0px;
+    border-radius: 24px;
+    color: $lines-blue;
+    background-color: $lines-white;
+    text-transform: uppercase;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 1em;
+  }
+
+  .start-button {
+    padding: 20px;
+    margin: 20px;
+    border-radius: 50%;
+    font-size: 1.1em;
+    background-color: $lines-yellow;
+    width: 100px;
+    height: 100px;
+
+    @media screen and (min-width: 600px) {
+      width: 150px;
+      height: 150px;
+    }
+  }
+
+  a,
+  .faIcon {
+    text-decoration: none;
+    color: $lines-yellow;
+  }
+
+  button:hover,
+  button:active {
+    background-color: $lines-yellow-active;
+  }
+
+  a:active,
+  a:hover,
+  .faIcon:active,
+  .faIcon:hover,
+  .faIconFooter:active,
+  .faIconFooter:hover {
+    color: $lines-yellow-active;
+  }
+
+  .record,
+  .play,
+  .pause,
+  .clear,
+  .checkbox {
+    border: 2px solid $lines-blue;
+    margin: 10px;
+  }
+
+  .record {
+    color: $lines-red;
+    border-radius: 50%;
+  }
+
+  .record:active,
+  .record:hover,
+  .recording:active,
+  .recording:hover {
+    color: $lines-red-active;
+  }
+
+  .recording {
+    border: 2px solid $lines-green;
+    border-radius: 50%;
+    color: $lines-red;
+    margin: 10px;
+  }
+
+  .play:active,
+  .play:hover {
+    color: $lines-green;
+  }
+
+  .checkbox {
+    transition: all 0.2s;
+  }
+
+  input:checked ~ .checkmark {
+    background-color: $lines-light-blue;
+  }
+}

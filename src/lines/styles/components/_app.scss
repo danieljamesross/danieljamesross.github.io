@@ -1,0 +1,14 @@
+@use "../colours" as *;
+@use "../fonts" as *;
+
+// Scoped under .lines-root (not html/body) so this piece can live as one
+// route inside the wider portfolio site without bleeding into it.
+.lines-root {
+  background-color: $lines-blue;
+  min-height: 100vh;
+  text-align: center;
+  font-family: $lines-font;
+  color: $lines-white;
+  align-items: center;
+  justify-content: center;
+}
