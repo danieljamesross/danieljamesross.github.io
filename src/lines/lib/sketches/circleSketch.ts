@@ -1,4 +1,4 @@
-import p5 from "p5";
+import p5 from "./p5Sound";
 import { getAudioContext } from "./helpers/audioContext";
 import { handlePlayRecord } from "./helpers/gestureController";
 import { drawPositionMarker } from "./helpers/positionMarker";

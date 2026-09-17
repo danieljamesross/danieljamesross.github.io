@@ -1,8 +1,7 @@
 "use client";
 
 import { memo, useEffect, useRef } from "react";
-import p5 from "p5";
-import "p5/lib/addons/p5.sound.js";
+import p5 from "@/lines/lib/sketches/p5Sound";
 import type { AppState, Dispatch } from "@/lines/lib/state/types";
 import type { LinesSketch } from "@/lines/lib/sketches/types";
 
