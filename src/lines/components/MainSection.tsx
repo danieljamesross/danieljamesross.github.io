@@ -19,56 +19,46 @@ export default function MainSection() {
 
   return (
     <div className="section-container">
-      <div className={sketchAudio1 ? "horiz" : "horiz hide"}>
-        <P5Canvas
-          id="sketchAudio1"
-          dispatch={dispatch}
-          sketch={horizSketch}
-          state={state}
-          playing={sketchAudio1}
-          className="horiz"
-        />
-      </div>
-      <div className={sketchAudio2 ? "vert" : "vert hide"}>
-        <P5Canvas
-          id="sketchAudio2"
-          dispatch={dispatch}
-          sketch={vertSketch}
-          state={state}
-          playing={sketchAudio2}
-          className="vert"
-        />
-      </div>
-      <div className={sketchAudio3 ? "circ" : "circ hide"}>
-        <P5Canvas
-          id="sketchAudio3"
-          dispatch={dispatch}
-          sketch={circleSketch}
-          state={state}
-          playing={sketchAudio3}
-          className="circ"
-        />
-      </div>
-      <div className={sketchAudio4 ? "vert" : "vert hide"}>
-        <P5Canvas
-          id="sketchAudio4"
-          dispatch={dispatch}
-          sketch={vertSketch}
-          state={state}
-          playing={sketchAudio4}
-          className="vert"
-        />
-      </div>
-      <div className={sketchAudio5 ? "horiz" : "horiz hide"}>
-        <P5Canvas
-          id="sketchAudio5"
-          dispatch={dispatch}
-          sketch={horizSketch}
-          state={state}
-          playing={sketchAudio5}
-          className="horiz"
-        />
-      </div>
+      <P5Canvas
+        id="sketchAudio1"
+        dispatch={dispatch}
+        sketch={horizSketch}
+        state={state}
+        playing={sketchAudio1}
+        className={sketchAudio1 ? "horiz" : "horiz hide"}
+      />
+      <P5Canvas
+        id="sketchAudio2"
+        dispatch={dispatch}
+        sketch={vertSketch}
+        state={state}
+        playing={sketchAudio2}
+        className={sketchAudio2 ? "vert" : "vert hide"}
+      />
+      <P5Canvas
+        id="sketchAudio3"
+        dispatch={dispatch}
+        sketch={circleSketch}
+        state={state}
+        playing={sketchAudio3}
+        className={sketchAudio3 ? "circ" : "circ hide"}
+      />
+      <P5Canvas
+        id="sketchAudio4"
+        dispatch={dispatch}
+        sketch={vertSketch}
+        state={state}
+        playing={sketchAudio4}
+        className={sketchAudio4 ? "vert" : "vert hide"}
+      />
+      <P5Canvas
+        id="sketchAudio5"
+        dispatch={dispatch}
+        sketch={horizSketch}
+        state={state}
+        playing={sketchAudio5}
+        className={sketchAudio5 ? "horiz" : "horiz hide"}
+      />
     </div>
   );
 }

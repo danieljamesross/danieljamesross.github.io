@@ -1,7 +1,7 @@
 "use client";
 
 import { memo, useEffect, useRef } from "react";
-import p5 from "@/lines/lib/sketches/p5Sound";
+import p5, { whenSoundReady } from "@/lines/lib/sketches/p5Sound";
 import type { AppState, Dispatch } from "@/lines/lib/state/types";
 import type { LinesSketch } from "@/lines/lib/sketches/types";
 
@@ -24,19 +24,53 @@ function P5CanvasImpl({
 }: P5CanvasProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const instanceRef = useRef<LinesSketch | null>(null);
+  // The instance is created asynchronously, so it needs the props as they
+  // are at creation time, not as they were when the effect ran.
+  const latestRef = useRef({ state, dispatch, playing });
+  useEffect(() => {
+    latestRef.current = { state, dispatch, playing };
+  });
 
   useEffect(() => {
-    if (!containerRef.current) return undefined;
+    const container = containerRef.current;
+    if (!container) return undefined;
 
-    const instance = new p5(
-      sketch as (s: p5) => void,
-      containerRef.current
-    ) as LinesSketch;
-    instance.id = id;
-    instanceRef.current = instance;
+    // p5's remove() is a no-op while preload() is still pending, so an
+    // instance torn down mid-load would otherwise still run setup() later
+    // and append an orphan canvas. Calling remove() at that point isn't an
+    // option either: p5.sound's remove hook disposes every sketch's sounds.
+    let removed = false;
+    const guardedSketch = (s: LinesSketch) => {
+      s.id = id;
+      s.state = latestRef.current.state;
+      s.dispatch = latestRef.current.dispatch;
+      s.p5playing = latestRef.current.playing;
+      sketch(s);
+      const { setup, draw } = s;
+      s.setup = () => {
+        if (removed) {
+          s.noLoop();
+          s.noCanvas();
+          return;
+        }
+        setup();
+      };
+      s.draw = () => {
+        if (!removed) draw();
+      };
+    };
+
+    whenSoundReady().then(() => {
+      if (removed) return;
+      instanceRef.current = new p5(
+        guardedSketch as (s: p5) => void,
+        container
+      ) as LinesSketch;
+    });
 
     return () => {
-      instance.remove();
+      removed = true;
+      instanceRef.current?.remove();
       instanceRef.current = null;
     };
     // The p5 instance owns its own draw loop; it should only be torn down

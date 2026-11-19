@@ -22,8 +22,10 @@
   .circ,
   .vert,
   .horiz {
+    cursor: pointer;
     flex-grow: 0;
     flex-shrink: 1;
+    height: fit-content;
   }
 
   .hide {
