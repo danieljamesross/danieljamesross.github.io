@@ -12,7 +12,16 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // CI tooling output
+    ".lighthouseci/**",
+    "test-results/**",
+    "playwright-report/**",
   ]),
+  {
+    // CommonJS config and scripts (Lighthouse CI only reads CommonJS).
+    files: ["**/*.cjs"],
+    rules: { "@typescript-eslint/no-require-imports": "off" },
+  },
 ]);
 
 export default eslintConfig;
