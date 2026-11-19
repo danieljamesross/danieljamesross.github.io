@@ -1,0 +1,24 @@
+@use "../mixins" as *;
+
+.lines-root {
+  .footer {
+    @include lines-flex;
+    width: 100%;
+    font-size: 2em;
+    margin: auto auto;
+    padding: 10px;
+
+    @media screen and (min-width: 600px) {
+      @include lines-flex;
+      width: 40%;
+      font-size: 1.3em;
+      margin: auto auto;
+      padding: 10px;
+    }
+  }
+
+  .faIconFooter {
+    padding: 10px;
+    cursor: pointer;
+  }
+}
