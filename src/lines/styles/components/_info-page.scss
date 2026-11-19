@@ -11,6 +11,11 @@
     }
   }
 
+  // Underlined so links in running text don't rely on colour alone.
+  .info-page a {
+    text-decoration: underline;
+  }
+
   p,
   ol,
   li {

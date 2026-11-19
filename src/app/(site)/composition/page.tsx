@@ -19,7 +19,7 @@ export default function CompositionPage() {
           >
             <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
               <h2 className="text-lg font-medium">{work.title}</h2>
-              <span className="font-mono text-sm text-black/50 dark:text-white/50">
+              <span className="font-mono text-sm text-black/60 dark:text-white/50">
                 {work.year}
               </span>
             </div>

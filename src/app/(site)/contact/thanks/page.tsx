@@ -15,7 +15,7 @@ export default function ContactThanksPage() {
       </p>
       <Link
         href="/"
-        className="font-mono text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+        className="font-mono text-sm text-black/60 hover:text-black dark:text-white/50 dark:hover:text-white"
       >
         ← Back to projects
       </Link>
