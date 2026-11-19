@@ -99,7 +99,7 @@ export function horizSketch(s: LinesSketch): void {
     speed = s.constrain(
       s.map(position.y, 0, s.height, 16, 0.1) * speedScaler,
       0.1,
-      16
+      16,
     );
   };
 

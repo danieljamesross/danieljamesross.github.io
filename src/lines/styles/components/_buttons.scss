@@ -16,10 +16,15 @@
     font-size: 1em;
   }
 
-  a,
   .faIcon {
     text-decoration: none;
     color: $lines-yellow;
+  }
+
+  // Full-strength yellow: the translucent $lines-yellow is under 4.5:1
+  // against $lines-blue, which is too low for text.
+  a {
+    color: $lines-yellow-active;
   }
 
   button:hover,

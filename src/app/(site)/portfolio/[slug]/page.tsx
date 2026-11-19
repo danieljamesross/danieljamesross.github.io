@@ -38,7 +38,7 @@ export default async function ProjectPage({
     <div className="mx-auto max-w-4xl px-6 py-12">
       <Link
         href="/"
-        className="font-mono text-sm text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white"
+        className="font-mono text-sm text-black/60 hover:text-black dark:text-white/50 dark:hover:text-white"
       >
         ← All projects
       </Link>

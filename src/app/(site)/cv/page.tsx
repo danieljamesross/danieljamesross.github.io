@@ -22,7 +22,7 @@ const LINK_CLASS =
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
     <section className="mt-12">
-      <h2 className="mb-6 border-b border-black/10 pb-2 font-mono text-sm uppercase tracking-wide text-black/50 dark:border-white/15 dark:text-white/50">
+      <h2 className="mb-6 border-b border-black/10 pb-2 font-mono text-sm uppercase tracking-wide text-black/60 dark:border-white/15 dark:text-white/50">
         {title}
       </h2>
       {children}
@@ -46,7 +46,12 @@ export default function CvPage() {
         <li>London, UK</li>
         {cvLinks.map((link) => (
           <li key={link.url}>
-            <a href={link.url} target="_blank" rel="noopener noreferrer" className={LINK_CLASS}>
+            <a
+              href={link.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={LINK_CLASS}
+            >
               {link.label}
             </a>
           </li>
@@ -68,7 +73,7 @@ export default function CvPage() {
                       <h4 className="font-medium text-black/80 dark:text-white/80">
                         {role.title}
                       </h4>
-                      <span className="font-mono text-sm text-black/50 dark:text-white/50">
+                      <span className="font-mono text-sm text-black/60 dark:text-white/50">
                         {role.dates}
                       </span>
                     </div>
@@ -115,9 +120,11 @@ export default function CvPage() {
             >
               <div>
                 <h3 className="font-medium">{item.qualification}</h3>
-                <p className="text-sm text-black/70 dark:text-white/70">{item.institution}</p>
+                <p className="text-sm text-black/70 dark:text-white/70">
+                  {item.institution}
+                </p>
               </div>
-              <span className="font-mono text-sm text-black/50 dark:text-white/50">
+              <span className="font-mono text-sm text-black/60 dark:text-white/50">
                 {item.dates}
               </span>
             </li>

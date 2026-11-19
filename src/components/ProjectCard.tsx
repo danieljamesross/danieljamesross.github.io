@@ -28,8 +28,12 @@ export default function ProjectCard({
         />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h2 className="text-lg font-semibold tracking-tight">{project.title}</h2>
-        <p className="flex-1 text-sm text-black/70 dark:text-white/70">{project.excerpt}</p>
+        <h2 className="text-lg font-semibold tracking-tight">
+          {project.title}
+        </h2>
+        <p className="flex-1 text-sm text-black/70 dark:text-white/70">
+          {project.excerpt}
+        </p>
         <div className="flex flex-wrap gap-2 pt-1">
           {project.tags.slice(0, 4).map((tag) => (
             <Tag key={tag}>{tag}</Tag>

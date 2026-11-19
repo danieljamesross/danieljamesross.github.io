@@ -13,8 +13,12 @@ export default function SiteHeader() {
     <header className="border-b border-black/10 dark:border-white/15">
       <div className="mx-auto flex max-w-4xl flex-col gap-4 px-6 py-8 sm:flex-row sm:items-end sm:justify-between">
         <Link href="/" className="group">
-          <h1 className="text-2xl font-semibold tracking-tight">Daniel James Ross</h1>
-          <p className="font-mono text-sm text-black/50 dark:text-white/50">arty codey</p>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Daniel James Ross
+          </h1>
+          <p className="font-mono text-sm text-black/60 dark:text-white/50">
+            arty codey
+          </p>
         </Link>
         <nav className="flex gap-6 font-mono text-sm">
           {NAV_LINKS.map((link) => (

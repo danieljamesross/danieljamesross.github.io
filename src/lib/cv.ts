@@ -86,7 +86,9 @@ export const cvExperience: CvJob[] = [
       {
         title: "Junior Creative Technologist",
         dates: "2020 – 2021",
-        points: ["Built interactive web experiences and pitch prototypes for Google and Sony."],
+        points: [
+          "Built interactive web experiences and pitch prototypes for Google and Sony.",
+        ],
       },
     ],
   },
@@ -108,7 +110,9 @@ export const cvExperience: CvJob[] = [
       {
         title: "AV Technician, Sound Engineer and Lecturer",
         dates: "2010 – 2020",
-        points: ["Ran sound, video and webcasts for live events, and taught music computing."],
+        points: [
+          "Ran sound, video and webcasts for live events, and taught music computing.",
+        ],
       },
     ],
   },
@@ -117,19 +121,52 @@ export const cvExperience: CvJob[] = [
 export const cvSkills: CvSkillGroup[] = [
   {
     label: "Languages and frameworks",
-    skills: ["TypeScript", "JavaScript", "React", "Next.js", "Node.js", "REST APIs", "GraphQL", "C++", "WebAssembly", "Python", "C#", "Unity"],
+    skills: [
+      "TypeScript",
+      "JavaScript",
+      "React",
+      "Next.js",
+      "Node.js",
+      "REST APIs",
+      "GraphQL",
+      "C++",
+      "WebAssembly",
+      "Python",
+      "C#",
+      "Unity",
+    ],
   },
   {
     label: "Infrastructure and tooling",
-    skills: ["Cloudflare", "Google Cloud Run", "GitHub Actions", "CI/CD", "Staging environments", "Secrets management"],
+    skills: [
+      "Cloudflare",
+      "Google Cloud Run",
+      "GitHub Actions",
+      "CI/CD",
+      "Staging environments",
+      "Secrets management",
+    ],
   },
   {
     label: "Testing and quality",
-    skills: ["Jest", "Cypress", "Unit, integration and end-to-end testing", "ESLint", "Prettier", "Code review"],
+    skills: [
+      "Jest",
+      "Cypress",
+      "Unit, integration and end-to-end testing",
+      "ESLint",
+      "Prettier",
+      "Code review",
+    ],
   },
   {
     label: "Ways of working",
-    skills: ["Internal tools and automation", "Claude Code and agentic workflows", "Rapid prototyping", "Technical writing", "Team leadership and mentoring"],
+    skills: [
+      "Internal tools and automation",
+      "Claude Code and agentic workflows",
+      "Rapid prototyping",
+      "Technical writing",
+      "Team leadership and mentoring",
+    ],
   },
 ];
 

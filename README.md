@@ -4,14 +4,14 @@ Personal site of Daniel James Ross — composer, sound artist and software
 engineer. Built with Next.js and TypeScript, exported as static files and
 served by GitHub Pages at <https://danieljamesross.github.io>.
 
-| Route | What it is |
-|---|---|
-| `/` | Projects, ported from vitruviandan.wordpress.com |
-| `/portfolio/[slug]/` | One page per project |
-| `/composition/` | List of selected works |
-| `/lines/` | *Lines*, an interactive audiovisual piece (p5.js + p5.sound) |
-| `/cv/` | CV |
-| `/contact/` | Contact form (submissions handled by Netlify, see below) |
+| Route                | What it is                                                   |
+| -------------------- | ------------------------------------------------------------ |
+| `/`                  | Projects, ported from vitruviandan.wordpress.com             |
+| `/portfolio/[slug]/` | One page per project                                         |
+| `/composition/`      | List of selected works                                       |
+| `/lines/`            | _Lines_, an interactive audiovisual piece (p5.js + p5.sound) |
+| `/cv/`               | CV                                                           |
+| `/contact/`          | Contact form (submissions handled by Netlify, see below)     |
 
 ## Development
 
@@ -20,13 +20,30 @@ Requires Node 22 (the version CI uses).
 ```bash
 npm install
 npm run dev     # http://localhost:3000
-npm run lint
 npm run build   # static export into out/
 ```
 
 To check the production output as GitHub Pages will serve it, run
 `npm run build` and serve `out/` with any static file server, e.g.
 `npx serve out`.
+
+## Checks
+
+`.github/workflows/ci.yml` runs these on every pull request. They can all be
+run locally too; the last two need `npm run build` first, since they test
+the static export in `out/`.
+
+| Command                | What it checks                                                                                                                                                                                    |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run lint`         | ESLint                                                                                                                                                                                            |
+| `npm run format:check` | Prettier formatting (`npm run format` fixes it)                                                                                                                                                   |
+| `npm run typecheck`    | TypeScript                                                                                                                                                                                        |
+| `npm run test:a11y`    | axe (WCAG 2.2 AA plus best practices) on every page, in light and dark mode, and on `/lines/` once started with its info panel open. Uses Playwright; run `npx playwright install chromium` once. |
+| `npm run lighthouse`   | Lighthouse on every page. Accessibility, best practices and SEO must score 100; performance below 90 only warns, as it is too noisy on CI to gate on.                                             |
+
+Both page checks list pages from `out/` via `scripts/static-routes.cjs`, so
+new pages are covered automatically. Lighthouse reports are written to
+`.lighthouseci/` and uploaded as a workflow artifact.
 
 ## Editing content
 
@@ -52,7 +69,7 @@ netlify-form/      separate Netlify site that receives contact form posts
 
 ### Lines
 
-*Lines* is entirely client-side. A few things are deliberate and easy to
+_Lines_ is entirely client-side. A few things are deliberate and easy to
 break:
 
 - `MainSection` (the only importer of p5.sound) is loaded with
@@ -62,7 +79,7 @@ break:
   throwaway p5 instance before the real sketches, so p5.sound registers its
   AudioWorklet processors once instead of once per sketch.
 - `P5Canvas` never calls `remove()` on a sketch torn down mid-preload:
-  p5.sound's remove hook disposes *every* sketch's sounds.
+  p5.sound's remove hook disposes _every_ sketch's sounds.
 
 ## Deployment
 
@@ -111,12 +128,12 @@ Keep these in sync when changing the form:
 
 Environment variables (Project configuration → Environment variables):
 
-| Variable | Required | Value |
-|---|---|---|
-| `SMTP_USER` | yes | Gmail address that sends the email |
-| `SMTP_PASS` | yes | Gmail app password, created at <https://myaccount.google.com/apppasswords> (needs 2-Step Verification) |
-| `CONTACT_TO_EMAIL` | no | Where messages go; defaults to `SMTP_USER` |
-| `SMTP_HOST` / `SMTP_PORT` | no | Defaults to `smtp.gmail.com` / `465`; set these to use another SMTP provider |
+| Variable                  | Required | Value                                                                                                  |
+| ------------------------- | -------- | ------------------------------------------------------------------------------------------------------ |
+| `SMTP_USER`               | yes      | Gmail address that sends the email                                                                     |
+| `SMTP_PASS`               | yes      | Gmail app password, created at <https://myaccount.google.com/apppasswords> (needs 2-Step Verification) |
+| `CONTACT_TO_EMAIL`        | no       | Where messages go; defaults to `SMTP_USER`                                                             |
+| `SMTP_HOST` / `SMTP_PORT` | no       | Defaults to `smtp.gmail.com` / `465`; set these to use another SMTP provider                           |
 
 Google revokes app passwords whenever the account password changes, so if
 emails stop arriving, create a new one and update `SMTP_PASS`. Delivery

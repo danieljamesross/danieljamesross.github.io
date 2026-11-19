@@ -99,7 +99,7 @@ export function vertSketch(s: LinesSketch): void {
     speed = s.constrain(
       s.map(position.x, 0.1, s.width, 0, 8) * speedScaler,
       0.1,
-      8
+      8,
     );
   };
 
