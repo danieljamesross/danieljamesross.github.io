@@ -34,3 +34,16 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+## Deployment
+
+The site is a static export (`output: "export"` in `next.config.ts`), built into
+`out/` and published to GitHub Pages by `.github/workflows/deploy.yml` on every
+push to `main`. Nothing may depend on a running server: no Server Actions, no
+request-reading Route Handlers, no image optimisation.
+
+The contact form is the one exception. GitHub Pages can't receive form posts,
+so `netlify-form/` is deployed as a separate, build-less Netlify site whose
+form handler emails submissions on. Its form definition must keep the same
+name and fields as `src/app/(site)/contact/ContactForm.tsx`, and
+`CONTACT_FORM_SITE` in that file must match the Netlify site's URL.
