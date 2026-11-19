@@ -39,7 +39,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 The site is a static export (`output: "export"` in `next.config.ts`), built into
 `out/` and published to GitHub Pages by `.github/workflows/deploy.yml` on every
-push to `source`. Nothing may depend on a running server: no Server Actions, no
+push to `master`. Nothing may depend on a running server: no Server Actions, no
 request-reading Route Handlers, no image optimisation.
 
 The contact form is the one exception. GitHub Pages can't receive form posts,
