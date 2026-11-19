@@ -12,9 +12,10 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
-    // The image optimiser needs a server; the project images are already
-    // sized for the web on WordPress, so serve them as-is.
-    unoptimized: true,
+    // The built-in optimiser needs a server; resize via WordPress.com's
+    // image CDN instead (see the loader for details).
+    loader: "custom",
+    loaderFile: "./src/lib/imageLoader.ts",
   },
 };
 
