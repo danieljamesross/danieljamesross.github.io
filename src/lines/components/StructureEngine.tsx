@@ -36,7 +36,10 @@ export default function StructureEngine() {
 
   useEffect(() => {
     if (sectionNum > 0 && sectionNum < numSections && canvasScaler) {
-      const axes: Record<SketchAudioKey, { x: number[] | null; y: number[] | null }> = {
+      const axes: Record<
+        SketchAudioKey,
+        { x: number[] | null; y: number[] | null }
+      > = {
         sketchAudio1: {
           x: readRecordedAxis("sketchAudio1_X"),
           y: readRecordedAxis("sketchAudio1_Y"),

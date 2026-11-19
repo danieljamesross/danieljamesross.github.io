@@ -18,7 +18,9 @@ export const handler = async (event) => {
 
   const { SMTP_USER, SMTP_PASS } = process.env;
   if (!SMTP_USER || !SMTP_PASS) {
-    throw new Error("SMTP_USER and SMTP_PASS must be set to email contact form submissions");
+    throw new Error(
+      "SMTP_USER and SMTP_PASS must be set to email contact form submissions",
+    );
   }
 
   const name = String(payload.data.name ?? "").trim();

@@ -43,7 +43,10 @@ export interface AppState {
   canvasHorizHeight?: number;
 }
 
-export type Colours = Pick<AppState, "circColour" | "horizColour" | "vertColour">;
+export type Colours = Pick<
+  AppState,
+  "circColour" | "horizColour" | "vertColour"
+>;
 
 export type Action =
   | { type: "START" }

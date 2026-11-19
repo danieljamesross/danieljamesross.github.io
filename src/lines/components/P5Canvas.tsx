@@ -64,7 +64,7 @@ function P5CanvasImpl({
       if (removed) return;
       instanceRef.current = new p5(
         guardedSketch as (s: p5) => void,
-        container
+        container,
       ) as LinesSketch;
     });
 

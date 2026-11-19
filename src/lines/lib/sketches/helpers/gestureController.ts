@@ -30,7 +30,7 @@ export function handlePlayRecord(
   sketch: LinesSketch,
   position: GesturePosition,
   gesture: RecordedGesture,
-  { widthKey, heightKey, xDivisor, yDivisor }: GestureControllerOptions
+  { widthKey, heightKey, xDivisor, yDivisor }: GestureControllerOptions,
 ): void {
   const { recordGesture, playGesture } = sketch.state;
   const width = sketch.state[widthKey] as number | undefined;

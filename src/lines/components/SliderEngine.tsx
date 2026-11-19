@@ -8,7 +8,8 @@ const TICK_MS = 20;
 /** Side-effect-only component: advances the progress slider while a gesture plays. */
 export default function SliderEngine() {
   const dispatch = useAppDispatch();
-  const { slider, playGesture, sliderMax, sectionNum, numSections } = useAppState();
+  const { slider, playGesture, sliderMax, sectionNum, numSections } =
+    useAppState();
 
   useEffect(() => {
     if (!(playGesture && sectionNum > 0 && sectionNum < numSections)) {

@@ -22,10 +22,18 @@ export default function Footer() {
         rel="noopener noreferrer"
         aria-label="Portfolio (WordPress)"
       >
-        <FontAwesomeIcon icon={faWordpress} className="faIconFooter" aria-hidden />
+        <FontAwesomeIcon
+          icon={faWordpress}
+          className="faIconFooter"
+          aria-hidden
+        />
       </a>
       <a href={EMAIL_URL} aria-label="Email">
-        <FontAwesomeIcon icon={faEnvelope} className="faIconFooter" aria-hidden />
+        <FontAwesomeIcon
+          icon={faEnvelope}
+          className="faIconFooter"
+          aria-hidden
+        />
       </a>
       <a
         href={GITHUB_URL}
@@ -41,7 +49,11 @@ export default function Footer() {
         rel="noopener noreferrer"
         aria-label="SoundCloud"
       >
-        <FontAwesomeIcon icon={faSoundcloud} className="faIconFooter" aria-hidden />
+        <FontAwesomeIcon
+          icon={faSoundcloud}
+          className="faIconFooter"
+          aria-hidden
+        />
       </a>
     </div>
   );

@@ -1,0 +1,13 @@
+# Generated
+.next/
+out/
+.lighthouseci/
+test-results/
+playwright-report/
+next-env.d.ts
+package-lock.json
+netlify-form/package-lock.json
+
+# Binary / third-party
+public/audio/
+node_modules/

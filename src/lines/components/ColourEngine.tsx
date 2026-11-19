@@ -11,20 +11,26 @@ const RANGE_VERT = ["#0a1930", "#f6b02c", "#a21622", "#ff4da6", "#33648a"];
 /** Side-effect-only component: derives canvas colours from playback progress. */
 export default function ColourEngine() {
   const dispatch = useAppDispatch();
-  const {
-    sectionNum,
-    circRms,
-    horizRms,
-    vertRms,
-    numSections,
-    slider,
-  } = useAppState();
+  const { sectionNum, circRms, horizRms, vertRms, numSections, slider } =
+    useAppState();
 
   useEffect(() => {
-    const domain = [0, numSections * 0.25, numSections * 0.5, numSections * 0.75, numSections];
-    const horizColourScale = scaleLinear<string>().domain(domain).range(RANGE_HORIZ);
-    const vertColourScale = scaleLinear<string>().domain(domain).range(RANGE_VERT);
-    const circColourScale = scaleLinear<string>().domain(domain).range(RANGE_CIRCLE);
+    const domain = [
+      0,
+      numSections * 0.25,
+      numSections * 0.5,
+      numSections * 0.75,
+      numSections,
+    ];
+    const horizColourScale = scaleLinear<string>()
+      .domain(domain)
+      .range(RANGE_HORIZ);
+    const vertColourScale = scaleLinear<string>()
+      .domain(domain)
+      .range(RANGE_VERT);
+    const circColourScale = scaleLinear<string>()
+      .domain(domain)
+      .range(RANGE_CIRCLE);
 
     if (sectionNum > 0) {
       dispatch({

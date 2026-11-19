@@ -4,14 +4,14 @@ Personal site of Daniel James Ross — composer, sound artist and software
 engineer. Built with Next.js and TypeScript, exported as static files and
 served by GitHub Pages at <https://danieljamesross.github.io>.
 
-| Route | What it is |
-|---|---|
-| `/` | Projects, ported from vitruviandan.wordpress.com |
-| `/portfolio/[slug]/` | One page per project |
-| `/composition/` | List of selected works |
-| `/lines/` | *Lines*, an interactive audiovisual piece (p5.js + p5.sound) |
-| `/cv/` | CV |
-| `/contact/` | Contact form (submissions handled by Netlify, see below) |
+| Route                | What it is                                                   |
+| -------------------- | ------------------------------------------------------------ |
+| `/`                  | Projects, ported from vitruviandan.wordpress.com             |
+| `/portfolio/[slug]/` | One page per project                                         |
+| `/composition/`      | List of selected works                                       |
+| `/lines/`            | _Lines_, an interactive audiovisual piece (p5.js + p5.sound) |
+| `/cv/`               | CV                                                           |
+| `/contact/`          | Contact form (submissions handled by Netlify, see below)     |
 
 ## Development
 
@@ -52,7 +52,7 @@ netlify-form/      separate Netlify site that receives contact form posts
 
 ### Lines
 
-*Lines* is entirely client-side. A few things are deliberate and easy to
+_Lines_ is entirely client-side. A few things are deliberate and easy to
 break:
 
 - `MainSection` (the only importer of p5.sound) is loaded with
@@ -62,7 +62,7 @@ break:
   throwaway p5 instance before the real sketches, so p5.sound registers its
   AudioWorklet processors once instead of once per sketch.
 - `P5Canvas` never calls `remove()` on a sketch torn down mid-preload:
-  p5.sound's remove hook disposes *every* sketch's sounds.
+  p5.sound's remove hook disposes _every_ sketch's sounds.
 
 ## Deployment
 
@@ -111,12 +111,12 @@ Keep these in sync when changing the form:
 
 Environment variables (Project configuration → Environment variables):
 
-| Variable | Required | Value |
-|---|---|---|
-| `SMTP_USER` | yes | Gmail address that sends the email |
-| `SMTP_PASS` | yes | Gmail app password, created at <https://myaccount.google.com/apppasswords> (needs 2-Step Verification) |
-| `CONTACT_TO_EMAIL` | no | Where messages go; defaults to `SMTP_USER` |
-| `SMTP_HOST` / `SMTP_PORT` | no | Defaults to `smtp.gmail.com` / `465`; set these to use another SMTP provider |
+| Variable                  | Required | Value                                                                                                  |
+| ------------------------- | -------- | ------------------------------------------------------------------------------------------------------ |
+| `SMTP_USER`               | yes      | Gmail address that sends the email                                                                     |
+| `SMTP_PASS`               | yes      | Gmail app password, created at <https://myaccount.google.com/apppasswords> (needs 2-Step Verification) |
+| `CONTACT_TO_EMAIL`        | no       | Where messages go; defaults to `SMTP_USER`                                                             |
+| `SMTP_HOST` / `SMTP_PORT` | no       | Defaults to `smtp.gmail.com` / `465`; set these to use another SMTP provider                           |
 
 Google revokes app passwords whenever the account password changes, so if
 emails stop arriving, create a new one and update `SMTP_PASS`. Delivery

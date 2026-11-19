@@ -3,7 +3,8 @@
 // on. Field names must match the form definition in netlify-form/index.html.
 export const CONTACT_FORM_SITE = "https://danieljamesross-contact.netlify.app";
 
-const LABEL_CLASS = "mb-1 block font-mono text-sm text-black/60 dark:text-white/50";
+const LABEL_CLASS =
+  "mb-1 block font-mono text-sm text-black/60 dark:text-white/50";
 
 const INPUT_CLASS =
   "w-full rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-black/50 dark:border-white/20 dark:focus:border-white/60";
@@ -66,7 +67,13 @@ export default function ContactForm() {
       {/* Honeypot for bots; Netlify drops any submission that fills it in. */}
       <div aria-hidden="true" className="hidden">
         <label htmlFor="bot-field">Leave this empty</label>
-        <input type="text" id="bot-field" name="bot-field" tabIndex={-1} autoComplete="off" />
+        <input
+          type="text"
+          id="bot-field"
+          name="bot-field"
+          tabIndex={-1}
+          autoComplete="off"
+        />
       </div>
 
       <div>
