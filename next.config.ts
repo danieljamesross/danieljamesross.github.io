@@ -1,4 +1,5 @@
 import type { NextConfig } from "next";
+import imageWidths from "./src/lib/imageWidths.json";
 
 const nextConfig: NextConfig = {
   // Built as plain HTML/JS/CSS into `out/` and served by GitHub Pages, so
@@ -12,10 +13,12 @@ const nextConfig: NextConfig = {
     root: __dirname,
   },
   images: {
-    // The built-in optimiser needs a server; resize via WordPress.com's
-    // image CDN instead (see the loader for details).
+    // The built-in optimiser needs a server; scripts/optimize-images.mjs
+    // pre-generates a WebP copy per width instead (see the loader).
     loader: "custom",
     loaderFile: "./src/lib/imageLoader.ts",
+    // Only the widths that script generates.
+    ...imageWidths,
   },
 };
 

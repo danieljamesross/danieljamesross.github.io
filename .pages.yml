@@ -1,0 +1,63 @@
+# Pages CMS configuration: https://pagescms.org/docs/configuration/
+# Keep the fields here in step with the validation in src/lib/projects.ts.
+media:
+  input: src/assets/images
+  output: /images
+  rename: safe
+  extensions: [jpg, jpeg, png, webp]
+
+content:
+  - name: projects
+    label: Projects
+    type: collection
+    path: src/content/projects
+    format: yaml-frontmatter
+    # The filename becomes the project's URL: /portfolio/<filename>/
+    filename: "{primary}.md"
+    view:
+      fields: [title, date]
+      primary: title
+      sort: [date, title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - { name: title, type: string, required: true }
+      - name: date
+        type: date
+        required: true
+        description: When the project happened. Projects are listed most recent first.
+        options: { format: yyyy-MM-dd }
+      - name: excerpt
+        label: Summary
+        type: text
+        required: true
+        description: One or two sentences, shown on the project card and in search results.
+      - { name: image, type: image, required: true }
+      - name: imageAlt
+        label: Image description
+        type: string
+        description: Describes the image for people using screen readers. Uses the title if left empty.
+      - name: tags
+        type: string
+        list: true
+      - name: links
+        type: object
+        list:
+          collapsible:
+            collapsed: true
+            summary: "{label}"
+        fields:
+          - {
+              name: label,
+              type: string,
+              required: true,
+              description: "For example: Listen on SoundCloud",
+            }
+          - { name: url, label: Link, type: string, required: true }
+      - name: body
+        label: Text
+        type: rich-text
+        options:
+          format: markdown
+          media: false

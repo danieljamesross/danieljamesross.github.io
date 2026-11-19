@@ -47,9 +47,33 @@ new pages are covered automatically. Lighthouse reports are written to
 
 ## Editing content
 
-Most content is plain data rather than markup:
+### Projects (Pages CMS)
 
-- **Projects and compositions:** `src/lib/data.ts`
+Each project is a Markdown file in `src/content/projects/`, edited through
+[Pages CMS](https://pagescms.org) at <https://app.pagescms.org> (sign in with
+GitHub; it needs its GitHub app installed on this repository). Saving in the
+CMS commits to the repository, which redeploys the site.
+
+- **Fields** are defined in `.pages.yml` and validated at build time by
+  `src/lib/projects.ts`. Keep the two in step. An invalid file fails the
+  build with a message naming the file and field, and the live site stays
+  as it was.
+- **Order:** projects are listed by `date`, most recent first. The dates
+  migrated from WordPress are approximations (the month the image was
+  uploaded), so correct them as needed.
+- **URLs:** the filename is the URL, `/portfolio/<filename>/`. Renaming a
+  file changes its URL.
+- **Images** are uploaded to `src/assets/images/` and referenced as
+  `/images/<name>`. `scripts/optimize-images.mjs` runs before every
+  `npm run dev` and `npm run build` and writes resized WebP copies to
+  `public/_images/` (gitignored), which `src/lib/imageLoader.ts` points
+  `next/image` at. Keep images reasonably light: the first projects' images
+  are the biggest factor in the home page's Lighthouse performance score.
+- **Text** is Markdown. Images can't be placed inside the text.
+
+### Everything else
+
+- **Compositions:** `src/lib/data.ts`
 - **CV:** `src/lib/cv.ts`
 - **Header navigation:** `src/components/SiteHeader.tsx`
 
@@ -58,13 +82,16 @@ Most content is plain data rather than markup:
 ```
 src/
   app/
-    (site)/        pages that share the site header and footer
-    lines/         the Lines route (adds the site header, its own font and styles)
-  components/      shared site components
-  lib/             site content (data.ts, cv.ts)
-  lines/           the Lines piece: React components, p5 sketches, state, SCSS
-public/audio/      audio used by Lines
-netlify-form/      separate Netlify site that receives contact form posts
+    (site)/          pages that share the site header and footer
+    lines/           the Lines route (adds the site header, its own font and styles)
+  assets/images/     project images (uploaded through Pages CMS)
+  components/        shared site components
+  content/projects/  one Markdown file per project
+  lib/               site content (data.ts, cv.ts) and project loading
+  lines/             the Lines piece: React components, p5 sketches, state, SCSS
+public/audio/        audio used by Lines
+netlify-form/        separate Netlify site that receives contact form posts
+scripts/             build and CI helpers (image optimisation, page discovery)
 ```
 
 ### Lines
