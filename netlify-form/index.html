@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Contact form — Daniel James Ross</title>
+    <meta http-equiv="refresh" content="0; url=https://danieljamesross.github.io/contact/" />
+  </head>
+  <body>
+    <!--
+      This site exists only so Netlify's form handler can receive submissions
+      from the real contact page on danieljamesross.github.io. Netlify
+      registers forms by scanning deployed HTML for `data-netlify`, so this
+      definition must keep the same name and fields as
+      src/app/(site)/contact/ContactForm.tsx.
+    -->
+    <form name="contact" method="POST" action="/thanks/" data-netlify="true" netlify-honeypot="bot-field" hidden>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <textarea name="message"></textarea>
+      <input type="text" name="bot-field" />
+    </form>
+    <p><a href="https://danieljamesross.github.io/contact/">Go to the contact page</a></p>
+  </body>
+</html>
