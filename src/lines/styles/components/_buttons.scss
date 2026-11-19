@@ -16,21 +16,6 @@
     font-size: 1em;
   }
 
-  .start-button {
-    padding: 20px;
-    margin: 20px;
-    border-radius: 50%;
-    font-size: 1.1em;
-    background-color: $lines-yellow;
-    width: 100px;
-    height: 100px;
-
-    @media screen and (min-width: 600px) {
-      width: 150px;
-      height: 150px;
-    }
-  }
-
   a,
   .faIcon {
     text-decoration: none;

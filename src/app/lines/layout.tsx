@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Alata } from "next/font/google";
+import SiteHeader from "@/components/SiteHeader";
 import "@/lines/styles/main.scss";
 
 const alata = Alata({
@@ -16,5 +17,10 @@ export const metadata: Metadata = {
 };
 
 export default function LinesLayout({ children }: { children: ReactNode }) {
-  return <div className={alata.variable}>{children}</div>;
+  return (
+    <>
+      <SiteHeader />
+      <div className={`${alata.variable} flex flex-1 flex-col`}>{children}</div>
+    </>
+  );
 }
