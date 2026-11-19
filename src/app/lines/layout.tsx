@@ -20,7 +20,7 @@ export default function LinesLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <div className={`${alata.variable} flex flex-1 flex-col`}>{children}</div>
+      <main className={`${alata.variable} flex flex-1 flex-col`}>{children}</main>
     </>
   );
 }

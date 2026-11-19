@@ -13,6 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://danieljamesross.github.io"),
   title: {
     default: "Daniel James Ross",
     template: "%s — Daniel James Ross",

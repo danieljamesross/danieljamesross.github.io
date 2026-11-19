@@ -3,7 +3,7 @@ import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Message sent",
-  robots: { index: false },
+  description: "Thanks for contacting Daniel James Ross.",
 };
 
 export default function ContactThanksPage() {

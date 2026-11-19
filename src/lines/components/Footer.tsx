@@ -16,26 +16,33 @@ const GITHUB_URL = "https://github.com/danieljamesross";
 export default function Footer() {
   return (
     <div className="footer">
-      <FontAwesomeIcon
-        icon={faWordpress}
-        onClick={() => window.open(PORTFOLIO_URL, "_blank")}
-        className="faIconFooter"
-      />
-      <FontAwesomeIcon
-        icon={faEnvelope}
-        onClick={() => window.open(EMAIL_URL, "_self")}
-        className="faIconFooter"
-      />
-      <FontAwesomeIcon
-        icon={faGithub}
-        onClick={() => window.open(GITHUB_URL, "_blank")}
-        className="faIconFooter"
-      />
-      <FontAwesomeIcon
-        icon={faSoundcloud}
-        onClick={() => window.open(SOUNDCLOUD_URL, "_blank")}
-        className="faIconFooter"
-      />
+      <a
+        href={PORTFOLIO_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Portfolio (WordPress)"
+      >
+        <FontAwesomeIcon icon={faWordpress} className="faIconFooter" aria-hidden />
+      </a>
+      <a href={EMAIL_URL} aria-label="Email">
+        <FontAwesomeIcon icon={faEnvelope} className="faIconFooter" aria-hidden />
+      </a>
+      <a
+        href={GITHUB_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="GitHub"
+      >
+        <FontAwesomeIcon icon={faGithub} className="faIconFooter" aria-hidden />
+      </a>
+      <a
+        href={SOUNDCLOUD_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="SoundCloud"
+      >
+        <FontAwesomeIcon icon={faSoundcloud} className="faIconFooter" aria-hidden />
+      </a>
     </div>
   );
 }

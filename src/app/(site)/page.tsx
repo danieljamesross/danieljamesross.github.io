@@ -10,8 +10,9 @@ export default function Home() {
         projects, collaborations, and commissions.
       </p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {projects.map((project) => (
-          <ProjectCard key={project.slug} project={project} />
+        {projects.map((project, i) => (
+          // The first row is above the fold on every layout.
+          <ProjectCard key={project.slug} project={project} preload={i < 2} />
         ))}
       </div>
     </div>

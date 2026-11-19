@@ -3,7 +3,14 @@ import Link from "next/link";
 import type { Project } from "@/lib/data";
 import Tag from "./Tag";
 
-export default function ProjectCard({ project }: { project: Project }) {
+export default function ProjectCard({
+  project,
+  preload = false,
+}: {
+  project: Project;
+  /** Set for cards visible on first load, so their image isn't lazy-loaded. */
+  preload?: boolean;
+}) {
   return (
     <Link
       href={`/portfolio/${project.slug}`}
@@ -14,7 +21,9 @@ export default function ProjectCard({ project }: { project: Project }) {
           src={project.image}
           alt={project.title}
           fill
-          sizes="(min-width: 640px) 50vw, 100vw"
+          sizes="(min-width: 896px) 420px, (min-width: 640px) 50vw, 100vw"
+          preload={preload}
+          fetchPriority={preload ? "high" : undefined}
           className="object-cover transition-transform duration-300 group-hover:scale-105"
         />
       </div>
