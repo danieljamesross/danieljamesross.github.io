@@ -1,6 +1,11 @@
 # Deploy this folder as its own Netlify site (set "Base directory" to
 # `netlify-form` in the site's build settings). It has no build step; it only
-# hosts the contact form definition and the post-submission redirect.
+# hosts the contact form definition, the post-submission redirect, and the
+# function that emails each submission on.
 [build]
   publish = "."
   command = ""
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"

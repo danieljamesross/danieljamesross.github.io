@@ -1,0 +1,9 @@
+{
+  "name": "danieljamesross-contact",
+  "private": true,
+  "type": "module",
+  "description": "Netlify site that receives the danieljamesross.github.io contact form and emails submissions on.",
+  "dependencies": {
+    "nodemailer": "^10.6.0"
+  }
+}

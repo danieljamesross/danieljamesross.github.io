@@ -43,7 +43,9 @@ push to `master`. Nothing may depend on a running server: no Server Actions, no
 request-reading Route Handlers, no image optimisation.
 
 The contact form is the one exception. GitHub Pages can't receive form posts,
-so `netlify-form/` is deployed as a separate, build-less Netlify site whose
-form handler emails submissions on. Its form definition must keep the same
+so `netlify-form/` is deployed as a separate, build-less Netlify site that
+receives them. Its `submission-created` function emails each one on via
+Nodemailer over SMTP (Gmail by default), with Reply-To set to the sender;
+it needs `SMTP_USER` and `SMTP_PASS` (a Gmail app password) set in Netlify. Its form definition must keep the same
 name and fields as `src/app/(site)/contact/ContactForm.tsx`, and
 `CONTACT_FORM_SITE` in that file must match the Netlify site's URL.
