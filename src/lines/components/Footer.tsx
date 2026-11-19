@@ -3,7 +3,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEnvelope } from "@fortawesome/free-solid-svg-icons";
 import {
-  faTwitter,
   faGithub,
   faWordpress,
   faSoundcloud,
@@ -11,7 +10,6 @@ import {
 
 const PORTFOLIO_URL = "https://vitruviandan.wordpress.com";
 const EMAIL_URL = "mailto:mr.danielross@gmail.com";
-const TWITTER_URL = "https://twitter.com/danieljamesross";
 const SOUNDCLOUD_URL = "https://soundcloud.com/daniel-james-ross/";
 const GITHUB_URL = "https://github.com/danieljamesross";
 
@@ -36,11 +34,6 @@ export default function Footer() {
       <FontAwesomeIcon
         icon={faSoundcloud}
         onClick={() => window.open(SOUNDCLOUD_URL, "_blank")}
-        className="faIconFooter"
-      />
-      <FontAwesomeIcon
-        icon={faTwitter}
-        onClick={() => window.open(TWITTER_URL, "_blank")}
         className="faIconFooter"
       />
     </div>
