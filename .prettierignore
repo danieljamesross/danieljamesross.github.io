@@ -11,3 +11,4 @@ netlify-form/package-lock.json
 # Binary / third-party
 public/audio/
 node_modules/
+public/_images/

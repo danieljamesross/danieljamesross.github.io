@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/lib/data";
+import type { Project } from "@/lib/projects";
 import Tag from "./Tag";
 
 export default function ProjectCard({
@@ -19,7 +19,7 @@ export default function ProjectCard({
       <div className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5">
         <Image
           src={project.image}
-          alt={project.title}
+          alt={project.imageAlt}
           fill
           sizes="(min-width: 896px) 420px, (min-width: 640px) 50vw, 100vw"
           preload={preload}

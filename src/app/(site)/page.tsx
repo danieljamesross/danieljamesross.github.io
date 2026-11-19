@@ -1,5 +1,5 @@
 import ProjectCard from "@/components/ProjectCard";
-import { projects } from "@/lib/data";
+import { getProjects } from "@/lib/projects";
 
 export default function Home() {
   return (
@@ -10,7 +10,7 @@ export default function Home() {
         collaborations, and commissions.
       </p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-        {projects.map((project, i) => (
+        {getProjects().map((project, i) => (
           // The first row is above the fold on every layout.
           <ProjectCard key={project.slug} project={project} preload={i < 2} />
         ))}
