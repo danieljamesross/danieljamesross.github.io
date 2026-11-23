@@ -6,6 +6,9 @@ import { vertexShader, fragmentShader } from "./shaders";
 // world coordinates on the z = 0 plane the blob lives on.
 const UV_TO_WORLD = 6.0 / 1.8;
 const MAX_PIXELS = 1600 * 1000;
+// Without a GPU the browser ray-marches on the CPU, which at full size takes
+// seconds a frame and can hang the page, so render far fewer pixels.
+const SOFTWARE_MAX_PIXELS = 60 * 1000;
 const NUM_DENTS = 4;
 // Roughly what the low, mid and high bands read at full volume, so each can
 // be scaled to about 1 for shaping the surface.
@@ -38,6 +41,16 @@ function compile(gl: WebGLRenderingContext, type: number, src: string) {
   return shader;
 }
 
+// Renderer names of the CPU rasterisers Chrome, Firefox and Windows fall
+// back to without a GPU.
+function isSoftwareRenderer(gl: WebGLRenderingContext) {
+  const info = gl.getExtension("WEBGL_debug_renderer_info");
+  const renderer = String(
+    gl.getParameter(info ? info.UNMASKED_RENDERER_WEBGL : gl.RENDERER),
+  );
+  return /swiftshader|llvmpipe|softpipe|software|basic render/i.test(renderer);
+}
+
 function damp(current: number, target: number, rate: number, dt: number) {
   return target + (current - target) * Math.exp(-rate * dt);
 }
@@ -56,6 +69,10 @@ export default class BlobScene {
   private raf = 0;
   private program: WebGLProgram;
   private buffer: WebGLBuffer;
+  private maxPixels: number;
+  // Everything the last drawn frame showed, so a frame that would look the
+  // same can be skipped. A still, silent blob costs nothing to leave up.
+  private drawn: number[] = [];
 
   // Blob physics state, all in world units.
   private center = { x: 0, y: 0 };
@@ -103,6 +120,7 @@ export default class BlobScene {
     const gl = canvas.getContext("webgl", { antialias: false, alpha: false });
     if (!gl) throw new Error("WebGL not supported");
     this.gl = gl;
+    this.maxPixels = isSoftwareRenderer(gl) ? SOFTWARE_MAX_PIXELS : MAX_PIXELS;
     this.overlay = new SpectrumOverlay(overlayCanvas);
 
     const program = gl.createProgram()!;
@@ -146,11 +164,13 @@ export default class BlobScene {
     const h = canvas.clientHeight;
     let scale = Math.min(window.devicePixelRatio || 1, 2);
     // Ray marching is per pixel, so keep the pixel count in check.
-    if (w * h * scale * scale > MAX_PIXELS) {
-      scale = Math.sqrt(MAX_PIXELS / (w * h));
+    if (w * h * scale * scale > this.maxPixels) {
+      scale = Math.sqrt(this.maxPixels / (w * h));
     }
     canvas.width = Math.round(w * scale);
     canvas.height = Math.round(h * scale);
+    // Setting the size clears the canvas, even to the same size.
+    this.drawn = [];
     this.gl.viewport(0, 0, canvas.width, canvas.height);
     this.extent = { x: ((0.5 * w) / h) * UV_TO_WORLD, y: 0.5 * UV_TO_WORLD };
     this.overlay.resize();
@@ -352,14 +372,47 @@ export default class BlobScene {
     this.time += dt;
     this.step(dt);
 
-    const { gl, u } = this;
+    // Gestures only bend the blob while it's sounding.
+    const { alive } = this;
+    for (let i = 0; i < NUM_DENTS; i++) {
+      this.dentUniform.set(this.dents.subarray(i * 4, i * 4 + 3), i * 4);
+      this.dentUniform[i * 4 + 3] = this.dents[i * 4 + 3] * alive;
+    }
+    // uTime is left out: it only moves the film grain.
+    const look = [
+      this.canvas.width,
+      this.canvas.height,
+      this.flow,
+      ...this.shape,
+      this.center.x,
+      this.center.y,
+      this.stretch.x * alive,
+      this.stretch.y * alive,
+      ...this.pullDir,
+      this.pullLen * alive,
+      ...this.dentUniform,
+      this.rough,
+      this.energy,
+      this.light.x,
+      this.light.y,
+      ...this.bands,
+    ];
+    // Written so a missing entry (nothing drawn yet) counts as changed.
+    if (look.some((v, i) => !(Math.abs(v - this.drawn[i]) < 1e-4))) {
+      this.drawn = look;
+      this.draw();
+    }
+
+    this.raf = requestAnimationFrame(this.frame);
+  };
+
+  private draw() {
+    const { gl, u, alive } = this;
     gl.uniform2f(u.uRes, this.canvas.width, this.canvas.height);
     gl.uniform1f(u.uTime, this.time);
     gl.uniform1f(u.uFlow, this.flow);
     gl.uniform3fv(u.uShape, this.shape);
     gl.uniform3f(u.uCenter, this.center.x, this.center.y, 0);
-    // Gestures only bend the blob while it's sounding.
-    const { alive } = this;
     gl.uniform3f(u.uStretch, this.stretch.x * alive, this.stretch.y * alive, 0);
     gl.uniform4f(
       u.uPull,
@@ -368,19 +421,13 @@ export default class BlobScene {
       this.pullDir[2],
       this.pullLen * alive,
     );
-    for (let i = 0; i < NUM_DENTS; i++) {
-      this.dentUniform.set(this.dents.subarray(i * 4, i * 4 + 3), i * 4);
-      this.dentUniform[i * 4 + 3] = this.dents[i * 4 + 3] * alive;
-    }
     gl.uniform4fv(u.uDents, this.dentUniform);
     gl.uniform1f(u.uRough, this.rough);
     gl.uniform1f(u.uEnergy, this.energy);
     gl.uniform2f(u.uLight, this.light.x, this.light.y);
     gl.uniform4fv(u.uBands, this.bands);
     gl.drawArrays(gl.TRIANGLES, 0, 3);
-
-    this.raf = requestAnimationFrame(this.frame);
-  };
+  }
 
   destroy() {
     cancelAnimationFrame(this.raf);

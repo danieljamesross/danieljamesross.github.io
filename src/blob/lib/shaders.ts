@@ -121,15 +121,20 @@ float lipschitz() {
 // is passed out for the spikes to share.
 float body(vec3 n, out vec3 warp) {
     float t = uFlow;
-    // domain-warped noise so the surface slowly flows rather than wobbles
-    warp = vec3(
-        snoise(n * 0.5 + vec3(0.0, t * 0.05, 0.0)),
-        snoise(n * 0.5 + vec3(5.2, 0.0, t * 0.04)),
-        0.0
-    );
-    // bass swells and breathes the whole body
     float r = 1.0 + 0.05 * uShape.x * sin(t * 0.6);
-    r += lowAmp() * snoise(n * 0.75 + 0.4 * warp + vec3(t * 0.05, -t * 0.07, t * 0.04));
+    warp = vec3(0.0);
+    // In silence the noise has no effect, so don't pay for it: without a
+    // GPU this is most of the cost of a frame.
+    if (lowAmp() + midAmp() + highAmp() > 1e-4) {
+        // domain-warped noise so the surface slowly flows rather than wobbles
+        warp = vec3(
+            snoise(n * 0.5 + vec3(0.0, t * 0.05, 0.0)),
+            snoise(n * 0.5 + vec3(5.2, 0.0, t * 0.04)),
+            0.0
+        );
+        // bass swells and breathes the whole body
+        r += lowAmp() * snoise(n * 0.75 + 0.4 * warp + vec3(t * 0.05, -t * 0.07, t * 0.04));
+    }
 
     r += uPull.w * pow(max(dot(n, uPull.xyz), 0.0), 12.0);
     for (int i = 0; i < 4; i++) {
@@ -165,7 +170,9 @@ float map(vec3 p, out float fromBody) {
     // spikes only stand outward, so until within reach of their tips step
     // as for the smooth body and skip working them out
     float clear = fromBody - midAmp() - highAmp();
-    if (clear > 0.05) return clear * 0.8 / bodyLipschitz();
+    if (clear > 0.05 || midAmp() + highAmp() < 1e-4) {
+        return clear * 0.8 / bodyLipschitz();
+    }
     return (fromBody - spikeLayers(n, warp)) * 0.8 / lipschitz();
 }
 
