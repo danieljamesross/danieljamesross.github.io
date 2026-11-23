@@ -6,14 +6,16 @@ void main() {
 `;
 
 // Ray-marched signed distance blob. The surface is a sphere whose radius
-// is displaced along each direction by flowing noise, a tentacle reaching
-// toward the pointer, and a handful of slowly relaxing "dents" left behind
-// by earlier gestures.
+// is displaced along each direction by flowing noise shaped by the sound,
+// a tentacle reaching toward the pointer, and a handful of slowly relaxing
+// "dents" left behind by earlier gestures. In silence it's a still sphere.
 export const fragmentShader = `
 precision highp float;
 
 uniform vec2 uRes;
 uniform float uTime;
+// Clock for the surface's flow; it only runs while there's sound.
+uniform float uFlow;
 uniform vec3 uCenter;
 uniform vec3 uStretch;
 uniform vec4 uPull;
@@ -24,6 +26,9 @@ uniform vec2 uLight;
 // Live analysis of the synth's output: low, mid and high band levels and
 // the spectral centroid (0 dark .. 1 bright), all 0..1.
 uniform vec4 uBands;
+// The same low, mid and high levels scaled so a full sound is about 1,
+// which shape the surface at large, medium and fine scales.
+uniform vec3 uShape;
 
 const vec3 NAVY = vec3(0.039, 0.098, 0.188);
 const vec3 YELLOW = vec3(0.918, 0.690, 0.102);
@@ -84,18 +89,47 @@ float snoise(vec3 v) {
     return 42.0 * dot(m * m, vec4(dot(p0, x0), dot(p1, x1), dot(p2, x2), dot(p3, x3)));
 }
 
-// radial displacement for a unit direction n
-float surface(vec3 n) {
-    float t = uTime;
+// Sharp outward spikes, 0..1. Ridged noise has a crease along each zero
+// crossing; multiplying two such fields and raising the result to a power
+// leaves points where their crests cross, with flat ground in between.
+float spikes(vec3 p) {
+    float a = 1.0 - abs(snoise(p));
+    float b = 1.0 - abs(snoise(p * 1.3 + 17.0));
+    return pow(a * b, 4.0);
+}
+
+// How far each band's noise layer displaces the surface.
+float lowAmp() { return uRough * 1.4 * uShape.x; }
+float midAmp() { return uRough * 1.6 * uShape.y; }
+float highAmp() { return uRough * 0.7 * uShape.z; }
+
+float dents() {
+    return uDents[0].w + uDents[1].w + uDents[2].w + uDents[3].w;
+}
+
+// Steep displacements break the distance bound, so the march takes steps
+// this many times smaller: first for the smooth body alone, then with the
+// spikes on it.
+float bodyLipschitz() {
+    return 1.0 + 2.2 * uPull.w + 1.5 * dents() + 1.2 * lowAmp();
+}
+float lipschitz() {
+    return bodyLipschitz() + 6.0 * midAmp() + 14.0 * highAmp();
+}
+
+// Radial extent of the smooth body for a unit direction n. The flow warp
+// is passed out for the spikes to share.
+float body(vec3 n, out vec3 warp) {
+    float t = uFlow;
     // domain-warped noise so the surface slowly flows rather than wobbles
-    vec3 warp = vec3(
+    warp = vec3(
         snoise(n * 0.5 + vec3(0.0, t * 0.05, 0.0)),
         snoise(n * 0.5 + vec3(5.2, 0.0, t * 0.04)),
         0.0
     );
-    float r = 1.0 + 0.035 * sin(t * 0.6);
-    r += uRough * snoise(n * 0.75 + 0.4 * warp + vec3(t * 0.05, -t * 0.07, t * 0.04));
-    r += uRough * 0.3 * snoise(n * 1.6 - 0.5 * warp + t * 0.09);
+    // bass swells and breathes the whole body
+    float r = 1.0 + 0.05 * uShape.x * sin(t * 0.6);
+    r += lowAmp() * snoise(n * 0.75 + 0.4 * warp + vec3(t * 0.05, -t * 0.07, t * 0.04));
 
     r += uPull.w * pow(max(dot(n, uPull.xyz), 0.0), 12.0);
     for (int i = 0; i < 4; i++) {
@@ -104,7 +138,17 @@ float surface(vec3 n) {
     return r;
 }
 
-float map(vec3 p) {
+// How far the spikes stand out from the body, 0..midAmp() + highAmp():
+// mids push out spikes and treble bristles the skin with finer ones.
+float spikeLayers(vec3 n, vec3 warp) {
+    float t = uFlow;
+    return midAmp() * spikes(n * 1.6 - 0.5 * warp + t * 0.09)
+        + highAmp() * spikes(n * 4.5 + 0.3 * warp + vec3(-t * 0.3, t * 0.25, t * 0.2));
+}
+
+// Scaled distance to step along a ray. Also gives the distance from the
+// smooth body, which the glow follows.
+float map(vec3 p, out float fromBody) {
     vec3 q = p - uCenter;
     // stretch along the direction of travel, thinning slightly across it
     float sl = length(uStretch);
@@ -115,10 +159,19 @@ float map(vec3 p) {
         q = sd * along / (1.0 + sl) + across * (1.0 + sl * 0.35);
     }
     float r = length(q);
-    // steep displacements break the distance bound, so take smaller steps
-    float dents = uDents[0].w + uDents[1].w + uDents[2].w + uDents[3].w;
-    float lipschitz = 1.0 + 2.2 * uPull.w + 1.5 * dents + 2.0 * uRough;
-    return (r - surface(q / max(r, 1e-4))) * 0.8 / lipschitz;
+    vec3 n = q / max(r, 1e-4);
+    vec3 warp;
+    fromBody = r - body(n, warp);
+    // spikes only stand outward, so until within reach of their tips step
+    // as for the smooth body and skip working them out
+    float clear = fromBody - midAmp() - highAmp();
+    if (clear > 0.05) return clear * 0.8 / bodyLipschitz();
+    return (fromBody - spikeLayers(n, warp)) * 0.8 / lipschitz();
+}
+
+float map(vec3 p) {
+    float fromBody;
+    return map(p, fromBody);
 }
 
 vec3 calcNormal(vec3 p) {
@@ -147,7 +200,8 @@ void main() {
     vec3 col = background(uv, rd);
 
     // bound the march with a sphere that contains every possible deformation
-    float bound = (1.0 + 2.0 * uRough + max(uPull.w, 0.0) + 0.9) * (1.0 + length(uStretch));
+    float bound = (1.0 + 1.5 * (lowAmp() + midAmp() + highAmp())
+        + max(uPull.w, 0.0) + 0.9) * (1.0 + length(uStretch));
     vec3 oc = ro - uCenter;
     float b = dot(oc, rd);
     float h = b * b - dot(oc, oc) + bound * bound;
@@ -164,9 +218,10 @@ void main() {
         float minD = 1e3;
         bool hit = false;
         float d = 1.0;
-        for (int i = 0; i < 128; i++) {
-            d = map(ro + rd * t);
-            minD = min(minD, d);
+        float fromBody;
+        for (int i = 0; i < 160; i++) {
+            d = map(ro + rd * t, fromBody);
+            minD = min(minD, fromBody);
             if (d < 0.001) { hit = true; break; }
             t += d;
             if (t > tEnd) break;
@@ -174,7 +229,7 @@ void main() {
         // grazing rays can run out of steps just short of the surface
         if (!hit && t < tEnd && d < 0.02) hit = true;
         // fade out toward the bounding sphere's edge so it never shows as a ring
-        glow = exp(-minD * 9.0) * smoothstep(0.0, 1.0, h);
+        glow = exp(-max(minD, 0.0) * 7.0) * smoothstep(0.0, 1.0, h);
 
         if (hit) {
             vec3 p = ro + rd * t;
@@ -192,7 +247,7 @@ void main() {
             // thin-film style iridescence that drifts over time; the
             // spectral centroid shifts its hues and treble makes it shimmer
             vec3 irid = 0.5 + 0.5 * cos(6.28318 * (vec3(0.0, 0.33, 0.67)
-                + fres * 0.9 + dot(n, vec3(0.3, 0.5, 0.2)) * 0.4 + uTime * 0.02
+                + fres * 0.9 + dot(n, vec3(0.3, 0.5, 0.2)) * 0.4 + uFlow * 0.02
                 + uBands.w * 0.6));
 
             // bass warms the shadowed core toward red, mids light the

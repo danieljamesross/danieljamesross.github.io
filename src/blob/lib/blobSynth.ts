@@ -14,6 +14,12 @@ const SPECTRUM_MIN_HZ = 40;
 const SPECTRUM_MAX_HZ = 12000;
 export const SPECTRUM_POINTS = 96;
 
+// Release time in seconds per second the note was held, kept long enough
+// on a quick tap not to click and short enough not to hang forever.
+const RELEASE_PER_SECOND_HELD = 1.5;
+const MIN_RELEASE = 0.2;
+const MAX_RELEASE = 8;
+
 export type Spectrum = {
   /** SPECTRUM_POINTS magnitudes in 0..1, low to high frequency. */
   curve: Float32Array;
@@ -68,6 +74,10 @@ export default class BlobSynth {
   private step = -1;
   private muted = false;
   private closed = false;
+  // Whether a note is held, kept so a press made while the worklet is still
+  // loading still sounds once it arrives.
+  private gate = false;
+  private pressedAt = 0;
 
   private spectrum: Spectrum = {
     curve: new Float32Array(SPECTRUM_POINTS),
@@ -126,6 +136,7 @@ export default class BlobSynth {
         this.master = master;
         this.analyser = analyser;
         this.bins = new Uint8Array(analyser.frequencyBinCount);
+        if (this.gate) node.port.postMessage({ type: "noteOn" });
       });
       // Closing the context mid-load aborts addModule(); that's expected
       // (React Strict Mode does it on every mount in development).
@@ -169,6 +180,24 @@ export default class BlobSynth {
     );
     this.param("detune").setTargetAtTime(3 + rough * 45, now, 0.2);
     this.param("gain").setTargetAtTime(0.1 + 0.25 * activity, now, 0.15);
+  }
+
+  /** Start a new attack, from wherever the envelope currently is. */
+  noteOn() {
+    this.gate = true;
+    this.pressedAt = performance.now();
+    this.node?.port.postMessage({ type: "noteOn" });
+  }
+
+  /** Let the note fade out, for longer the longer it was held. */
+  noteOff() {
+    this.gate = false;
+    const held = (performance.now() - this.pressedAt) / 1000;
+    const release = Math.min(
+      Math.max(held * RELEASE_PER_SECOND_HELD, MIN_RELEASE),
+      MAX_RELEASE,
+    );
+    this.node?.port.postMessage({ type: "noteOff", release });
   }
 
   /** Sweep the filter by `octaves` and let it fall back. */

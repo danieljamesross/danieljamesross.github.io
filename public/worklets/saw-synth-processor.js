@@ -6,6 +6,20 @@
 
 const TWO_PI = 2 * Math.PI;
 
+// Amplitude envelope, in seconds (sustain is a level, 0..1). The release
+// time comes with each "noteOff"; RELEASE is only the fallback.
+const ATTACK = 0.015;
+const DECAY = 0.6;
+const SUSTAIN = 0.45;
+const RELEASE = 1.8;
+// -ln(0.01): an exponential segment reaches 1% of the way left in its time.
+const TO_ONE_PERCENT = 4.6;
+
+const IDLE = 0;
+const ATTACKING = 1;
+const DECAYING = 2;
+const RELEASING = 3;
+
 // Band-limited step correction so the saws don't alias when pitched up.
 function polyBlep(t, dt) {
   if (t < dt) {
@@ -107,10 +121,28 @@ class SawSynthProcessor extends AudioWorkletProcessor {
     this.envDecay = Math.exp(-1 / (0.35 * sampleRate));
     this.smooth = 1 - Math.exp(-1 / (0.008 * sampleRate));
 
+    // ADSR on the output level, gated by "noteOn"/"noteOff" messages.
+    // The attack is linear and starts from wherever the envelope is, so
+    // retriggering mid-note doesn't click; decay and release are
+    // exponential, reaching ~1% of the way left after the given time.
+    this.amp = 0;
+    this.stage = IDLE;
+    this.attackStep = 1 / (ATTACK * sampleRate);
+    this.decayCoef = Math.exp(-TO_ONE_PERCENT / (DECAY * sampleRate));
+    this.releaseCoef = Math.exp(-TO_ONE_PERCENT / (RELEASE * sampleRate));
+
     this.port.onmessage = ({ data }) => {
       if (data.type === "accent") {
         this.env = 1;
         this.envAmount = data.amount;
+      } else if (data.type === "noteOn") {
+        this.stage = ATTACKING;
+      } else if (data.type === "noteOff") {
+        if (this.stage === IDLE) return;
+        this.stage = RELEASING;
+        this.releaseCoef = Math.exp(
+          -TO_ONE_PERCENT / ((data.release ?? RELEASE) * sampleRate),
+        );
       }
     };
   }
@@ -129,6 +161,22 @@ class SawSynthProcessor extends AudioWorkletProcessor {
     const targetGain = parameters.gain[0];
 
     for (let i = 0; i < left.length; i++) {
+      if (this.stage === ATTACKING) {
+        this.amp += this.attackStep;
+        if (this.amp >= 1) {
+          this.amp = 1;
+          this.stage = DECAYING;
+        }
+      } else if (this.stage === DECAYING) {
+        this.amp = SUSTAIN + (this.amp - SUSTAIN) * this.decayCoef;
+      } else if (this.stage === RELEASING) {
+        this.amp *= this.releaseCoef;
+        if (this.amp < 1e-5) {
+          this.amp = 0;
+          this.stage = IDLE;
+        }
+      }
+
       this.freq += (targetFreq - this.freq) * s;
       this.cutoff += (targetCutoff - this.cutoff) * s;
       this.res += (targetRes - this.res) * s;
@@ -176,8 +224,9 @@ class SawSynthProcessor extends AudioWorkletProcessor {
         k,
       );
 
-      left[i] = Math.tanh(fl * 1.2) * this.gain;
-      right[i] = Math.tanh(fr * 1.2) * this.gain;
+      const level = this.gain * this.amp;
+      left[i] = Math.tanh(fl * 1.2) * level;
+      right[i] = Math.tanh(fr * 1.2) * level;
     }
 
     return true;

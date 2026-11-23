@@ -7,10 +7,15 @@ import { vertexShader, fragmentShader } from "./shaders";
 const UV_TO_WORLD = 6.0 / 1.8;
 const MAX_PIXELS = 1600 * 1000;
 const NUM_DENTS = 4;
+// Roughly what the low, mid and high bands read at full volume, so each can
+// be scaled to about 1 for shaping the surface.
+const BAND_FULL = [0.7, 0.35, 0.12];
 
 const UNIFORMS = [
   "uRes",
   "uTime",
+  "uFlow",
+  "uShape",
   "uCenter",
   "uStretch",
   "uPull",
@@ -60,12 +65,22 @@ export default class BlobScene {
   private pullLen = 0;
   private dents = new Float32Array(NUM_DENTS * 4);
   private nextDent = 0;
+  private dentUniform = new Float32Array(NUM_DENTS * 4);
   private rough = 0.14;
   private roughTarget = 0.14;
   private energy = 0;
   private light = { x: 1.5, y: 1.5 };
   // Smoothed spectrum bands for colour: low, mid, high, centroid.
   private bands = [0, 0, 0, 0];
+  // The low, mid and high bands scaled to 0..1 for the surface, and the
+  // loudest of them: how alive the blob is. At 0 it is still and smooth.
+  private shape = new Float32Array(3);
+  private alive = 0;
+  // Advances only while there's sound, so silence freezes the surface and
+  // the wander.
+  private flow = 0;
+  // Where the blob wanders around; moved to wherever it's dropped.
+  private home = { x: 0, y: 0 };
 
   private pointer = {
     x: 0,
@@ -170,6 +185,7 @@ export default class BlobScene {
     }
     this.energy = Math.min(this.energy + 0.6, 1);
     this.synth.accent(pointer.mode === "grab" ? 1.5 : 2.5);
+    this.synth.noteOn();
   }
 
   pointerUp() {
@@ -180,6 +196,11 @@ export default class BlobScene {
       this.nextDent = (this.nextDent + 1) % NUM_DENTS;
       this.synth.accent(-1.2);
     }
+    if (pointer.mode === "grab") {
+      const w = this.wander();
+      this.home = { x: this.center.x - w.x, y: this.center.y - w.y };
+    }
+    this.synth.noteOff();
     pointer.down = false;
     pointer.mode = null;
   }
@@ -193,13 +214,22 @@ export default class BlobScene {
     this.energy = Math.min(this.energy + 0.15, 1);
   }
 
+  /** Slow drift away from home, starting at zero. */
+  private wander() {
+    const f = this.flow;
+    return {
+      x: Math.sin(f * 0.13) * 0.35,
+      y: (Math.cos(f * 0.17) - 1) * 0.25,
+    };
+  }
+
   private step(dt: number) {
     const { pointer, center, vel, extent } = this;
-    const t = this.time;
 
     // Where the blob wants to be: a slow wander, or under the pointer.
-    let tx = Math.sin(t * 0.13) * 0.35;
-    let ty = Math.cos(t * 0.17) * 0.25;
+    const w = this.wander();
+    let tx = this.home.x + w.x;
+    let ty = this.home.y + w.y;
     let stiffness = 1.2;
     if (pointer.mode === "grab") {
       tx = pointer.x + this.grabOffset.x;
@@ -210,11 +240,13 @@ export default class BlobScene {
     ty = clamp(ty, -extent.y + 0.8, extent.y - 0.8);
 
     // Underdamped spring, so the blob lags and wobbles behind the pointer.
+    // Left alone it moves at the pace of the sound, freezing in silence.
+    const st = pointer.mode === "grab" ? dt : dt * this.alive;
     const damping = 2 * Math.sqrt(stiffness) * 0.6;
-    vel.x += ((tx - center.x) * stiffness - vel.x * damping) * dt;
-    vel.y += ((ty - center.y) * stiffness - vel.y * damping) * dt;
-    center.x += vel.x * dt;
-    center.y += vel.y * dt;
+    vel.x += ((tx - center.x) * stiffness - vel.x * damping) * st;
+    vel.y += ((ty - center.y) * stiffness - vel.y * damping) * st;
+    center.x += vel.x * st;
+    center.y += vel.y * st;
 
     this.stretch.x = damp(
       this.stretch.x,
@@ -284,8 +316,8 @@ export default class BlobScene {
       activity: this.energy,
     });
 
-    // Colour follows the sound. The analyser is already smoothed, so this
-    // only takes the edge off frame-to-frame flicker.
+    // Colour and contours follow the sound. The analyser is already
+    // smoothed, so this only takes the edge off frame-to-frame flicker.
     const spectrum = this.synth.analyse();
     const targets = [
       spectrum.low,
@@ -296,6 +328,11 @@ export default class BlobScene {
     for (let k = 0; k < 4; k++) {
       this.bands[k] = damp(this.bands[k], targets[k], 8, dt);
     }
+    for (let k = 0; k < 3; k++) {
+      this.shape[k] = clamp(this.bands[k] / BAND_FULL[k], 0, 1);
+    }
+    this.alive = Math.max(...this.shape);
+    this.flow += dt * this.alive;
 
     // The overlay works in CSS pixels, centred on the blob.
     const h = this.canvas.clientHeight;
@@ -318,16 +355,24 @@ export default class BlobScene {
     const { gl, u } = this;
     gl.uniform2f(u.uRes, this.canvas.width, this.canvas.height);
     gl.uniform1f(u.uTime, this.time);
+    gl.uniform1f(u.uFlow, this.flow);
+    gl.uniform3fv(u.uShape, this.shape);
     gl.uniform3f(u.uCenter, this.center.x, this.center.y, 0);
-    gl.uniform3f(u.uStretch, this.stretch.x, this.stretch.y, 0);
+    // Gestures only bend the blob while it's sounding.
+    const { alive } = this;
+    gl.uniform3f(u.uStretch, this.stretch.x * alive, this.stretch.y * alive, 0);
     gl.uniform4f(
       u.uPull,
       this.pullDir[0],
       this.pullDir[1],
       this.pullDir[2],
-      this.pullLen,
+      this.pullLen * alive,
     );
-    gl.uniform4fv(u.uDents, this.dents);
+    for (let i = 0; i < NUM_DENTS; i++) {
+      this.dentUniform.set(this.dents.subarray(i * 4, i * 4 + 3), i * 4);
+      this.dentUniform[i * 4 + 3] = this.dents[i * 4 + 3] * alive;
+    }
+    gl.uniform4fv(u.uDents, this.dentUniform);
     gl.uniform1f(u.uRough, this.rough);
     gl.uniform1f(u.uEnergy, this.energy);
     gl.uniform2f(u.uLight, this.light.x, this.light.y);
