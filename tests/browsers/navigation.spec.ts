@@ -123,16 +123,19 @@ test("the browser's back and forward buttons work", async ({ page }) => {
   ).toBeVisible();
 });
 
-test.describe("with reduced motion", () => {
-  test.use({ reducedMotion: "reduce" });
+test("reduced motion makes page changes near-instant", async ({ page }) => {
+  await navLink(page, "CV").click();
+  await expect(page).toHaveURL("/cv/");
+  const [normal] = await finishedTransitions(page, { timed: true });
 
-  test("pages change without animating", async ({ page }) => {
-    await navLink(page, "CV").click();
-    await expect(page).toHaveURL("/cv/");
-    // The transition still runs, but its animations take no time. (Reading
-    // them with getAnimations() mid-transition crashes WebKit.)
-    for (const { ms } of await finishedTransitions(page, { timed: true })) {
-      expect(ms).toBeLessThan(200);
-    }
-  });
+  await page.emulateMedia({ reducedMotion: "reduce" });
+  await navLink(page, "Composition").click();
+  await expect(page).toHaveURL("/composition/");
+  const [, reduced] = await finishedTransitions(page, { timed: true });
+
+  // The transition still runs, but its animations take no time, leaving only
+  // a frame or two. Frames are slow on some CI runners, so compare with the
+  // full transition on the same machine rather than a fixed time. (Reading
+  // the animations with getAnimations() mid-transition crashes WebKit.)
+  expect(reduced.ms).toBeLessThan(normal.ms! / 2);
 });
