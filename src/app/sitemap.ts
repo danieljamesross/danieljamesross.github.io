@@ -6,7 +6,14 @@ export const dynamic = "force-static";
 const SITE_URL = "https://danieljamesross.github.io";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const pages = ["/", "/composition/", "/lines/", "/cv/", "/contact/"];
+  const pages = [
+    "/",
+    "/composition/",
+    "/lines/",
+    "/blob/",
+    "/cv/",
+    "/contact/",
+  ];
   const projectPages = getProjects().map(
     (project) => `/portfolio/${project.slug}/`,
   );
