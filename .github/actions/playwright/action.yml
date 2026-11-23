@@ -18,7 +18,10 @@ runs:
       with:
         path: ${{ runner.temp }}/ms-playwright
         key: playwright-${{ runner.os }}-${{ runner.arch }}-${{ steps.version.outputs.version }}-${{ inputs.browsers }}
-    # Downloads only what the cache didn't have; on Linux it also installs
-    # system packages, which the cache can't hold.
-    - run: npx playwright install --with-deps ${{ inputs.browsers }}
+    # Downloads only what the cache didn't have. Linux also needs system
+    # packages, which the cache can't hold. Elsewhere --with-deps would only
+    # add Windows' Media Foundation, two minutes for codecs no test uses.
+    - run: |
+        deps=$([ "$RUNNER_OS" = Linux ] && echo --with-deps || true)
+        npx playwright install $deps ${{ inputs.browsers }}
       shell: bash

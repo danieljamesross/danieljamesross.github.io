@@ -22,16 +22,32 @@ for (const route of staticRoutes()) {
     );
     expect(overflow).toBeLessThanOrEqual(0);
 
-    // Some browsers have no WebGL, such as Firefox on CI runners without a
-    // GPU. Blob then tells the visitor (and logs why) rather than running.
-    const webgl = await page.evaluate(
-      () => !!document.createElement("canvas").getContext("webgl"),
-    );
-    if (route === "/blob/" && !webgl) {
-      await expect(
-        page.getByText("Your browser can't show this piece: it needs WebGL."),
-      ).toBeVisible();
-      return;
+    // Blob needs WebGL and AudioWorklet, which some browsers lack: Firefox
+    // on CI runners without a GPU has no WebGL, and Playwright's Windows
+    // WebKit no AudioWorklet. Blob then tells the visitor (and logs why).
+    if (route === "/blob/") {
+      const supports = await page.evaluate(() => ({
+        webgl: !!document.createElement("canvas").getContext("webgl"),
+        audioWorklet: typeof AudioWorkletNode !== "undefined",
+      }));
+      if (!supports.webgl) {
+        await expect(
+          page.getByText("Your browser can't show this piece: it needs WebGL."),
+        ).toBeVisible();
+        return;
+      }
+      if (!supports.audioWorklet && errors.length > 0) {
+        await expect(
+          page.getByText(
+            "Your browser doesn't support AudioWorklet, so it's silent.",
+          ),
+        ).toBeVisible();
+        // Some browsers add the stack to the logged error.
+        expect(errors).toEqual([
+          expect.stringMatching(/^Error: AudioWorklet not supported/),
+        ]);
+        return;
+      }
     }
     expect(errors).toEqual([]);
   });
