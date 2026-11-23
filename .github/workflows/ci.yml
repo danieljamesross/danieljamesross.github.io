@@ -2,6 +2,9 @@ name: CI
 
 on:
   pull_request:
+  # Also on master, so the README's CI badge shows its state.
+  push:
+    branches: [master]
   workflow_dispatch:
 
 permissions:
@@ -68,6 +71,12 @@ jobs:
           name: playwright-results
           path: test-results/
           retention-days: 14
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-accessibility
+          path: playwright-report/results.json
+          retention-days: 1
 
   browsers:
     name: ${{ matrix.browser }} on ${{ matrix.os-name }}
@@ -133,6 +142,12 @@ jobs:
           name: playwright-results-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           retention-days: 14
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-browsers-${{ matrix.os-name }}-${{ strategy.job-index }}
+          path: playwright-report/results.json
+          retention-days: 1
 
   lighthouse:
     name: Lighthouse (pages, share ${{ matrix.shard }} of 3)
@@ -160,3 +175,65 @@ jobs:
           name: lighthouse-reports-${{ matrix.shard }}
           path: .lighthouseci/
           retention-days: 14
+      - if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: report-lighthouse-${{ matrix.shard }}
+          path: .lighthouseci/manifest.json
+          retention-days: 1
+
+  # Gathers every job's results into one report: on the run's summary page,
+  # and as a comment on the PR, updated on each push rather than added anew.
+  report:
+    name: Report
+    needs: [lint, build, accessibility, browsers, lighthouse]
+    if: always()
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: report-*
+          path: reports/
+      - id: run
+        run: echo "started=$(gh api repos/${{ github.repository }}/actions/runs/${{ github.run_id }} --jq .run_started_at)" >> "$GITHUB_OUTPUT"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - run: node scripts/ci-report.mjs reports > report.md
+        env:
+          NEEDS: ${{ toJSON(needs) }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          STARTED_AT: ${{ steps.run.outputs.started }}
+      - run: cat report.md >> "$GITHUB_STEP_SUMMARY"
+      # A fork's PR gets a read-only token, so it can't be commented on.
+      - if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require("node:fs");
+            const body = fs.readFileSync("report.md", "utf8");
+            // The report's first line (MARKER in ci-report.mjs).
+            const marker = body.split("\n")[0];
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, {
+              owner, repo, issue_number,
+            });
+            const previous = comments.find(
+              (c) => c.user.type === "Bot" && c.body.startsWith(marker),
+            );
+            if (previous) {
+              await github.rest.issues.updateComment({
+                owner, repo, comment_id: previous.id, body,
+              });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
