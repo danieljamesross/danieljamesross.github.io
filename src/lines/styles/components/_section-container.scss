@@ -27,6 +27,15 @@
     flex-shrink: 1;
     height: fit-content;
     pointer-events: auto;
+
+    // On phones the sketches' canvases don't take touches.
+    canvas {
+      pointer-events: none;
+
+      @media screen and (min-width: 600px) {
+        pointer-events: auto;
+      }
+    }
   }
 
   .hide {
