@@ -66,9 +66,15 @@ export async function finishedTransitions(
   options: { timed: true },
 ): Promise<RecordedTransition[]>;
 export async function finishedTransitions(page: Page, { timed = false } = {}) {
+  // Only waiting, not judging speed: on a starved CI runner a transition
+  // can take ten seconds to finish.
   await expect
-    .poll(() =>
-      page.evaluate(() => window.__viewTransitions.every((t) => t.ms !== null)),
+    .poll(
+      () =>
+        page.evaluate(() =>
+          window.__viewTransitions.every((t) => t.ms !== null),
+        ),
+      { timeout: 30_000 },
     )
     .toBe(true);
   const recorded = await page.evaluate(() => window.__viewTransitions);
