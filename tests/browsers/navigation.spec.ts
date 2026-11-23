@@ -89,7 +89,12 @@ test("pieces with their own layouts transition too", async ({
   );
   await navLink(page, "Blob").click();
   await expect(page).toHaveURL("/blob/");
-  await expect(page.locator("main canvas").first()).toBeAttached();
+  // Blob appears about 0.4s after the click on a typical machine, but up to
+  // ~6s in Firefox on GitHub's GPU-less Windows runners, which render the
+  // page transition on a slow CPU. Loading speed is pages.spec.ts's concern.
+  await expect(page.locator("main canvas").first()).toBeAttached({
+    timeout: 15_000,
+  });
   await navLink(page, "Lines").click();
   await expect(page).toHaveURL("/lines/");
   await navLink(page, "Composition").click();
