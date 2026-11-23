@@ -31,19 +31,21 @@ To check the production output as GitHub Pages will serve it, run
 ## Checks
 
 `.github/workflows/ci.yml` runs these on every pull request. They can all be
-run locally too; the last two need `npm run build` first, since they test
+run locally too; the last three need `npm run build` first, since they test
 the static export in `out/`.
 
-| Command                | What it checks                                                                                                                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run lint`         | ESLint                                                                                                                                                                                            |
-| `npm run format:check` | Prettier formatting (`npm run format` fixes it)                                                                                                                                                   |
-| `npm run typecheck`    | TypeScript                                                                                                                                                                                        |
-| `npm run test:a11y`    | axe (WCAG 2.2 AA plus best practices) on every page, in light and dark mode, and on `/lines/` once started with its info panel open. Uses Playwright; run `npx playwright install chromium` once. |
-| `npm run lighthouse`   | Lighthouse on every page. Accessibility, best practices and SEO must score 100; performance below 90 only warns, as it is too noisy on CI to gate on.                                             |
+| Command                 | What it checks                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run lint`          | ESLint                                                                                                                                                                                                                                                                                                                                                                    |
+| `npm run format:check`  | Prettier formatting (`npm run format` fixes it)                                                                                                                                                                                                                                                                                                                           |
+| `npm run typecheck`     | TypeScript                                                                                                                                                                                                                                                                                                                                                                |
+| `npm run test:a11y`     | axe (WCAG 2.2 AA plus best practices) on every page, in light and dark mode, and on `/lines/` once started with its info panel open. Uses Playwright; run `npx playwright install chromium` once.                                                                                                                                                                         |
+| `npm run test:browsers` | Behaviour in Chrome, Firefox and Safari (WebKit), on desktop and on Chrome and Safari phones: every page loads without errors or sideways overflow, plus the theme toggle, the scrolling header, navigation and page transitions, size-proportional timing and reduced motion. Tests are in `tests/browsers/`; run `npx playwright install chromium firefox webkit` once. |
+| `npm run lighthouse`    | Lighthouse on every page. Accessibility, best practices and SEO must score 100; performance below 90 only warns, as it is too noisy on CI to gate on.                                                                                                                                                                                                                     |
 
-Both page checks list pages from `out/` via `scripts/static-routes.cjs`, so
-new pages are covered automatically. Lighthouse reports are written to
+The page checks list pages from `out/` via `scripts/static-routes.cjs`, so
+new pages are covered automatically. In CI the browser tests run as one job
+per engine, so a Safari-only failure shows up as its own red check. Lighthouse reports are written to
 `.lighthouseci/` and uploaded as a workflow artifact.
 
 ## Editing content

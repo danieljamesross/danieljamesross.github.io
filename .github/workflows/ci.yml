@@ -47,6 +47,40 @@ jobs:
           path: test-results/
           retention-days: 14
 
+  browsers:
+    name: Browsers (${{ matrix.name }})
+    runs-on: ubuntu-latest
+    strategy:
+      # Report every engine's failures, not just the first.
+      fail-fast: false
+      matrix:
+        include:
+          - name: Chrome
+            engine: chromium
+            projects: --project=chrome --project=mobile-chrome
+          - name: Firefox
+            engine: firefox
+            projects: --project=firefox
+          - name: Safari
+            engine: webkit
+            projects: --project=safari --project=mobile-safari
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: npx playwright install --with-deps ${{ matrix.engine }}
+      - run: npx playwright test ${{ matrix.projects }}
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.engine }}
+          path: test-results/
+          retention-days: 14
+
   lighthouse:
     name: Lighthouse (every page)
     runs-on: ubuntu-latest

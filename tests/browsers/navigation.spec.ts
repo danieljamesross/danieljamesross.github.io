@@ -1,0 +1,125 @@
+import { expect, test, type Page } from "@playwright/test";
+import {
+  collectErrors,
+  finishedTransitions,
+  nav,
+  recordViewTransitions,
+} from "./support";
+
+declare global {
+  interface Window {
+    __sameDocument?: boolean;
+  }
+}
+
+/** Marks the document, to check later navigations didn't reload it. */
+const markDocument = (page: Page) =>
+  page.evaluate(() => (window.__sameDocument = true));
+const sameDocument = (page: Page) =>
+  page.evaluate(() => window.__sameDocument === true);
+
+const navLink = (page: Page, name: string) =>
+  nav(page).getByRole("link", { name, exact: true });
+
+test.beforeEach(async ({ page }) => {
+  await recordViewTransitions(page);
+  await page.goto("/");
+  // Let Next prefetch the links, as it would for a visitor.
+  await page.waitForLoadState("networkidle");
+  await markDocument(page);
+});
+
+test("header links slide forward and back by nav order", async ({ page }) => {
+  await navLink(page, "CV").click();
+  await expect(page).toHaveURL("/cv/");
+  await expect(
+    page.getByRole("heading", { name: "CV", level: 1 }),
+  ).toBeVisible();
+  await expect(navLink(page, "CV")).toHaveAttribute("aria-current", "page");
+  const [slide] = await finishedTransitions(page, { timed: true });
+  expect(slide.types).toEqual(["nav-forward"]);
+  // Long enough to see (the exact timing is checked in motion.spec.ts).
+  expect(slide.ms).toBeGreaterThan(300);
+
+  await navLink(page, "Composition").click();
+  await expect(page).toHaveURL("/composition/");
+  await expect(
+    page.getByRole("heading", { name: "Composition", level: 1 }),
+  ).toBeVisible();
+  expect(await finishedTransitions(page)).toEqual([
+    ["nav-forward"],
+    ["nav-back"],
+  ]);
+  expect(await sameDocument(page)).toBe(true);
+});
+
+test("a project opens from its card and goes back", async ({ page }) => {
+  const errors = collectErrors(page);
+  await page.getByRole("link", { name: /^Giant Leap/ }).click();
+  await expect(page).toHaveURL("/portfolio/giant-leap/");
+  await expect(
+    page.getByRole("heading", { name: "Giant Leap", level: 1 }),
+  ).toBeVisible();
+  await expect(page.getByRole("img", { name: "Giant Leap" })).toBeVisible();
+  // Projects stays current on a project's page.
+  await expect(navLink(page, "Projects")).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+
+  await page.getByRole("link", { name: "All projects" }).click();
+  await expect(page).toHaveURL("/");
+  await expect(page.getByRole("link", { name: /^Giant Leap/ })).toBeVisible();
+  expect(await finishedTransitions(page)).toEqual([
+    ["nav-forward"],
+    ["nav-back"],
+  ]);
+  expect(await sameDocument(page)).toBe(true);
+  expect(errors).toEqual([]);
+});
+
+test("pieces with their own layouts transition too", async ({ page }) => {
+  await navLink(page, "Blob").click();
+  await expect(page).toHaveURL("/blob/");
+  await expect(page.locator("main canvas").first()).toBeAttached();
+  await navLink(page, "Lines").click();
+  await expect(page).toHaveURL("/lines/");
+  await navLink(page, "Composition").click();
+  await expect(page).toHaveURL("/composition/");
+  expect(await finishedTransitions(page)).toEqual([
+    ["nav-forward"],
+    ["nav-back"],
+    ["nav-back"],
+  ]);
+  expect(await sameDocument(page)).toBe(true);
+});
+
+test("the browser's back and forward buttons work", async ({ page }) => {
+  await navLink(page, "Composition").click();
+  await expect(page).toHaveURL("/composition/");
+  await page.goBack();
+  await expect(page).toHaveURL("/");
+  await expect(page.getByRole("link", { name: /^Giant Leap/ })).toBeVisible();
+  await expect(navLink(page, "Projects")).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
+  await page.goForward();
+  await expect(
+    page.getByRole("heading", { name: "Composition", level: 1 }),
+  ).toBeVisible();
+});
+
+test.describe("with reduced motion", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  test("pages change without animating", async ({ page }) => {
+    await navLink(page, "CV").click();
+    await expect(page).toHaveURL("/cv/");
+    // The transition still runs, but its animations take no time. (Reading
+    // them with getAnimations() mid-transition crashes WebKit.)
+    for (const { ms } of await finishedTransitions(page, { timed: true })) {
+      expect(ms).toBeLessThan(150);
+    }
+  });
+});
