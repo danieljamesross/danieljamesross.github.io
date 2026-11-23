@@ -44,8 +44,10 @@ the static export in `out/`.
 | `npm run lighthouse`    | Lighthouse on every page. Accessibility, best practices and SEO must score 100; performance below 90 only warns, as it is too noisy on CI to gate on.                                                                                                                                                                                                                     |
 
 The page checks list pages from `out/` via `scripts/static-routes.cjs`, so
-new pages are covered automatically. In CI the browser tests run as one job
-per engine, so a Safari-only failure shows up as its own red check. Lighthouse reports are written to
+new pages are covered automatically. In CI the browser tests run in every
+engine on Linux, macOS and Windows runners, each as its own job (so a
+failure that only happens in Safari on Windows shows up as its own red
+check), against one shared build of the site. Lighthouse reports are written to
 `.lighthouseci/` and uploaded as a workflow artifact.
 
 ## Editing content
