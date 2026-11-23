@@ -1,3 +1,4 @@
+import { ViewTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import type { Project } from "@/lib/projects";
@@ -14,19 +15,31 @@ export default function ProjectCard({
   return (
     <Link
       href={`/portfolio/${project.slug}`}
-      className="group flex flex-col overflow-hidden rounded-xl border border-black/10 transition-colors hover:border-black/30 dark:border-white/15 dark:hover:border-white/40"
+      transitionTypes={["nav-forward"]}
+      className="group flex flex-col overflow-hidden rounded-xl border border-black/10 transition-[border-color,box-shadow,translate] hover:border-black/30 hover:shadow-lg hover:shadow-black/5 motion-safe:hover:-translate-y-1 dark:border-white/15 dark:hover:border-white/40 dark:hover:shadow-black/40"
     >
-      <div className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5">
-        <Image
-          src={project.image}
-          alt={project.imageAlt}
-          fill
-          sizes="(min-width: 896px) 420px, (min-width: 640px) 50vw, 100vw"
-          preload={preload}
-          fetchPriority={preload ? "high" : undefined}
-          className="object-cover transition-transform duration-300 group-hover:scale-105"
-        />
-      </div>
+      {/* Morphs into the image at the top of the project's page. */}
+      <ViewTransition
+        name={`project-image-${project.slug}`}
+        share="morph"
+        default="none"
+      >
+        <div
+          data-morph
+          data-motion
+          className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5"
+        >
+          <Image
+            src={project.image}
+            alt={project.imageAlt}
+            fill
+            sizes="(min-width: 896px) 420px, (min-width: 640px) 50vw, 100vw"
+            preload={preload}
+            fetchPriority={preload ? "high" : undefined}
+            className="object-cover transition-transform motion-safe:group-hover:scale-[1.03]"
+          />
+        </div>
+      </ViewTransition>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <h2 className="text-lg font-semibold tracking-tight">
           {project.title}

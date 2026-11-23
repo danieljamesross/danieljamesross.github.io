@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
+import PageTransition from "@/components/PageTransition";
 import SiteHeader from "@/components/SiteHeader";
 
 export const metadata: Metadata = {
@@ -12,7 +13,9 @@ export default function BlobLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main className="flex flex-1 flex-col">{children}</main>
+      <PageTransition>
+        <main className="flex flex-1 flex-col">{children}</main>
+      </PageTransition>
     </>
   );
 }

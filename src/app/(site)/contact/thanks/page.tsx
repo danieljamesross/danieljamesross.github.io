@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import BackLink from "@/components/BackLink";
 
 export const metadata: Metadata = {
   title: "Message sent",
@@ -15,12 +15,7 @@ export default function ContactThanksPage() {
       <p className="mb-8 max-w-xl text-black/70 dark:text-white/70">
         Thanks for getting in touch. I&apos;ll get back to you soon.
       </p>
-      <Link
-        href="/"
-        className="font-mono text-sm text-black/60 hover:text-black dark:text-white/50 dark:hover:text-white"
-      >
-        ← Back to projects
-      </Link>
+      <BackLink href="/">Back to projects</BackLink>
     </div>
   );
 }

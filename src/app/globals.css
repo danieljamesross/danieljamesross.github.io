@@ -1,8 +1,42 @@
 @import "tailwindcss";
 
+/* ------------------------------------------------------------------ Theme */
+
+/* Light by default. Dark follows the system unless someone has picked a
+   theme with the toggle, which sets data-theme on <html> (see ThemeScript). */
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --background: #0a0a0a;
+  --foreground: #ededed;
+  color-scheme: dark;
+}
+
+/* `dark:` utilities follow the same rule as the colours above. */
+@custom-variant dark {
+  &:where([data-theme="dark"], [data-theme="dark"] *) {
+    @slot;
+  }
+  @media (prefers-color-scheme: dark) {
+    &:where(
+      :root:not([data-theme="light"]),
+      :root:not([data-theme="light"]) *
+    ) {
+      @slot;
+    }
+  }
 }
 
 @theme inline {
@@ -12,11 +46,10 @@
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+@theme {
+  --default-transition-timing-function: var(--ease-out-expo);
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
 body {
@@ -26,4 +59,228 @@ body {
 
 a {
   text-underline-offset: 3px;
+}
+
+/* ----------------------------------------------------------------- Motion */
+
+/* Everything that moves takes longer the bigger it is: a minimum time plus
+   a fixed amount per pixel of the element's diagonal, up to a cap. The
+   diagonal comes from MotionSizer, which measures links, buttons and
+   anything marked data-motion; src/lib/motion.ts reads the same numbers for
+   animations started from script. */
+:root {
+  --motion-base: 90; /* ms */
+  --motion-rate: 0.35; /* ms per px */
+  --motion-max: 700; /* ms */
+}
+
+@property --motion-size {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 200;
+}
+
+@layer base {
+  /* Tailwind's transition utilities read --default-transition-duration, so
+     setting it per element makes them all size-aware. An explicit
+     duration-* utility still wins. */
+  :where(a, button, [data-motion]) {
+    --motion-duration: clamp(
+      calc(var(--motion-base) * 1ms),
+      calc(
+        (var(--motion-base) + var(--motion-size) * var(--motion-rate)) * 1ms
+      ),
+      calc(var(--motion-max) * 1ms)
+    );
+    --default-transition-duration: var(--motion-duration);
+  }
+}
+
+/* Page transitions move the whole page, so they're timed by the viewport;
+   a project image morphing into its page by the image (both set by
+   MotionSizer). */
+:root {
+  --page-duration: clamp(
+    calc(var(--motion-base) * 1ms),
+    calc(
+      (var(--motion-base) + var(--page-size, 1200) * var(--motion-rate)) * 1ms
+    ),
+    calc(var(--motion-max) * 1ms)
+  );
+  --morph-duration: clamp(
+    calc(var(--motion-base) * 1ms),
+    calc(
+      (var(--motion-base) + var(--morph-size, 600) * var(--motion-rate)) * 1ms
+    ),
+    calc(var(--motion-max) * 1ms)
+  );
+}
+
+/* ------------------------------------------------------- Page transitions */
+
+/* Clicks during a transition go to the new page rather than the overlay. */
+::view-transition {
+  pointer-events: none;
+}
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: calc(var(--page-duration) * 0.5);
+}
+
+/* The header stays put while the page moves beneath it. */
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-old(site-header) {
+  display: none;
+}
+::view-transition-new(site-header) {
+  animation: none;
+}
+
+/* Header links slide the page by where they sit in the nav: forward to
+   the left, back to the right. The old page leaves quickly; the new one
+   arrives a little later and settles more gently. */
+::view-transition-old(.nav-forward),
+::view-transition-old(.nav-back) {
+  animation: calc(var(--page-duration) * 0.45) var(--ease-in-quad) both
+    page-leave;
+}
+::view-transition-new(.nav-forward),
+::view-transition-new(.nav-back) {
+  animation: var(--page-duration) var(--ease-out-expo)
+    calc(var(--page-duration) * 0.15) both page-arrive;
+}
+::view-transition-old(.nav-forward),
+::view-transition-new(.nav-back) {
+  --page-shift: -48px 0;
+}
+::view-transition-new(.nav-forward),
+::view-transition-old(.nav-back) {
+  --page-shift: 48px 0;
+}
+
+/* Navigations with no direction rise and fade instead. */
+::view-transition-old(.page-fade) {
+  --page-shift: 0 -12px;
+  animation: calc(var(--page-duration) * 0.4) var(--ease-in-quad) both
+    page-leave;
+}
+::view-transition-new(.page-fade) {
+  --page-shift: 0 16px;
+  animation: calc(var(--page-duration) * 0.8) var(--ease-out-expo)
+    calc(var(--page-duration) * 0.2) both page-arrive;
+}
+
+/* A project's image grows from its card into the top of its page. */
+::view-transition-group(.morph) {
+  animation-duration: var(--morph-duration);
+  animation-timing-function: var(--ease-out-expo);
+}
+::view-transition-image-pair(.morph) {
+  animation: var(--morph-duration) var(--ease-out-expo) both morph-blur;
+}
+
+@keyframes page-leave {
+  to {
+    opacity: 0;
+    translate: var(--page-shift);
+    filter: blur(4px);
+  }
+}
+
+@keyframes page-arrive {
+  from {
+    opacity: 0;
+    translate: var(--page-shift);
+    filter: blur(4px);
+  }
+}
+
+@keyframes morph-blur {
+  30% {
+    filter: blur(2px);
+  }
+}
+
+/* The theme toggle reveals the new theme in a growing circle (ThemeToggle
+   animates the clip), over everything including the header. */
+:root[data-theme-switching] .site-header {
+  view-transition-name: none;
+}
+:root[data-theme-switching]::view-transition-old(root),
+:root[data-theme-switching]::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+/* Colours change inside the snapshot, so don't also fade them. */
+:root[data-theme-switching] * {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*),
+  ::view-transition-image-pair(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
+/* ----------------------------------------------------------------- Header */
+
+/* Sticky, and only ever moved with transforms, so it never shifts the page.
+   Scrolled away from the top it shrinks to a thin bar: the background slides
+   up to leave its bottom 3.5rem showing, the bottom row (nav and toggle)
+   rises into that bar, and the name shrinks beside the nav while its
+   subtitle fades. Scrolling down hides it; scrolling up brings it back.
+   Keyboard focus inside always shows it in full. */
+.site-header {
+  --bar: 3.5rem;
+  transition: translate var(--motion-duration) var(--ease-out-expo);
+}
+
+.site-header__name {
+  transform-origin: left bottom;
+}
+
+.site-header__backdrop,
+.site-header__inner,
+.site-header__name,
+.site-header__subtitle {
+  transition-property: translate, scale, opacity;
+  transition-duration: var(--motion-duration);
+  transition-timing-function: var(--ease-out-expo);
+}
+
+.site-header[data-compact]:not(:has(:focus-visible)) {
+  .site-header__backdrop {
+    translate: 0 calc(-100% + var(--bar));
+  }
+  /* The bottom row is 2rem tall with 2rem of padding below it; this moves
+     it up to the middle of the bar. */
+  .site-header__inner {
+    translate: 0 calc(-100% + 4.75rem);
+  }
+  .site-header__name {
+    translate: 0 1rem;
+    scale: 0.75;
+  }
+  .site-header__subtitle {
+    opacity: 0;
+  }
+}
+
+.site-header[data-hidden]:not(:has(:focus-visible)) {
+  translate: 0 -100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-header,
+  .site-header * {
+    transition-duration: 0s !important;
+  }
 }

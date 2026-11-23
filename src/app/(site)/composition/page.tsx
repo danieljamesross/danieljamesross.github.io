@@ -35,7 +35,7 @@ export default function CompositionPage() {
                 href={work.scoreUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2 inline-block font-mono text-sm underline decoration-black/30 hover:decoration-black dark:decoration-white/30 dark:hover:decoration-white"
+                className="mt-2 inline-block font-mono text-sm underline decoration-black/30 transition-colors hover:decoration-black dark:decoration-white/30 dark:hover:decoration-white"
               >
                 View score →
               </a>

@@ -17,7 +17,7 @@ export const metadata: Metadata = {
 };
 
 const LINK_CLASS =
-  "underline decoration-black/30 hover:decoration-black dark:decoration-white/30 dark:hover:decoration-white";
+  "underline decoration-black/30 transition-colors hover:decoration-black dark:decoration-white/30 dark:hover:decoration-white";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
