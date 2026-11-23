@@ -1,5 +1,15 @@
 # danieljamesross.github.io
 
+[![CI](https://github.com/danieljamesross/danieljamesross.github.io/actions/workflows/ci.yml/badge.svg?branch=master)](https://github.com/danieljamesross/danieljamesross.github.io/actions/workflows/ci.yml?query=branch%3Amaster)
+[![Deploy](https://github.com/danieljamesross/danieljamesross.github.io/actions/workflows/deploy.yml/badge.svg?branch=master)](https://github.com/danieljamesross/danieljamesross.github.io/actions/workflows/deploy.yml)
+[![Tested in Chrome, Firefox and Safari](https://img.shields.io/badge/tested_in-Chrome_%C2%B7_Firefox_%C2%B7_Safari-4285F4?logo=googlechrome&logoColor=white)](#checks)
+[![On Linux, macOS and Windows](https://img.shields.io/badge/on-Linux_%C2%B7_macOS_%C2%B7_Windows-555?logo=githubactions&logoColor=white)](#checks)
+[![Lighthouse: 100 for accessibility, best practices and SEO](https://img.shields.io/badge/Lighthouse-100_accessibility_%C2%B7_best_practices_%C2%B7_SEO-0CCE6B?logo=lighthouse&logoColor=white)](#checks)
+[![WCAG 2.2 AA](https://img.shields.io/badge/WCAG_2.2-AA-005A9C?logo=w3c&logoColor=white)](#checks)
+[![Next.js 16](https://img.shields.io/badge/Next.js-16-000?logo=nextdotjs&logoColor=white)](https://nextjs.org)
+[![React 19](https://img.shields.io/badge/React-19-087EA4?logo=react&logoColor=white)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)](https://www.typescriptlang.org)
+
 Personal site of Daniel James Ross — composer, sound artist and software
 engineer. Built with Next.js and TypeScript, exported as static files and
 served by GitHub Pages at <https://danieljamesross.github.io>.
@@ -58,8 +68,12 @@ build:
 - **Lighthouse** splits the pages between three jobs (`LIGHTHOUSE_SHARD`
   in `lighthouserc.cjs`); its reports are uploaded as artifacts.
 - **Caching:** `node_modules`, Next's build cache and Playwright's browsers
-  are cached between runs (`.github/actions/`), and Playwright uses every
-  core.
+  are cached between runs (`.github/actions/`).
+- **Report:** a last job gathers every job's results into one report
+  (`scripts/ci-report.mjs`): a grid of browser tests by OS, accessibility,
+  Lighthouse scores for every page, and any failures with their errors. It's
+  shown on the run's summary page and posted as a comment on the PR, which
+  each push updates rather than adding another.
 
 ## Editing content
 

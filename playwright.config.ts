@@ -22,7 +22,14 @@ export default defineConfig({
   // runners is a single worker. Two everywhere keeps Linux and Windows as
   // they were; every core overloaded the runners and made WebKit flaky.
   workers: process.env.CI ? 2 : undefined,
-  reporter: process.env.CI ? [["github"], ["list"]] : "list",
+  // On CI, a JSON report too, for the results comment (scripts/ci-report.mjs).
+  reporter: process.env.CI
+    ? [
+        ["github"],
+        ["list"],
+        ["json", { outputFile: "playwright-report/results.json" }],
+      ]
+    : "list",
   use: {
     baseURL: `http://localhost:${PORT}`,
     // A trace (network, console, DOM over time) when a test fails once and
