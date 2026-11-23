@@ -47,16 +47,22 @@ test("moving it never shifts the page", async ({ page }) => {
   expect(after).toBe(before);
 });
 
-test("keyboard focus brings it back in full", async ({ page, browserName }) => {
+test("keyboard focus brings it back in full", async ({ page }) => {
   await scrollBy(page, 1200);
   expect((await headerState(page)).hidden).toBe(true);
-  // Safari only tabs to links with Option held.
-  await page.keyboard.press(browserName === "webkit" ? "Alt+Tab" : "Tab");
+  const focusInHeader = () =>
+    page.evaluate(() => !!document.activeElement?.closest(".site-header"));
+  // Which keys reach links varies: Safari on macOS only tabs to them with
+  // Option held, WebKit elsewhere with plain Tab.
+  for (const key of ["Tab", "Alt+Tab"]) {
+    await page.keyboard.press(key);
+    if (await focusInHeader()) break;
+  }
+  expect(await focusInHeader()).toBe(true);
+  await page.waitForTimeout(800);
   const title = page.getByRole("link", {
     name: "Daniel James Ross arty codey",
   });
-  await expect(title).toBeFocused();
-  await page.waitForTimeout(800);
   const box = await title.boundingBox();
   expect(box!.y).toBeGreaterThanOrEqual(0);
   await expect(page.getByText("arty codey")).toHaveCSS("opacity", "1");

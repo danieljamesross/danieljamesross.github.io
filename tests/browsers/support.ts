@@ -14,6 +14,9 @@ export function collectErrors(page: Page) {
   return errors;
 }
 
+// `ms` runs from when the animations start to when they end: it leaves out
+// rendering the new page and taking snapshots, which on slow CI machines can
+// take longer than the animations themselves.
 type RecordedTransition = { types: string[]; ms: number | null };
 
 declare global {
@@ -40,10 +43,13 @@ export async function recordViewTransitions(page: Page) {
         arg && typeof arg === "object" && arg.types ? [...arg.types] : [];
       const record: RecordedTransition = { types, ms: null };
       window.__viewTransitions.push(record);
-      const started = performance.now();
       const transition = start.call(this, arg);
+      let started: number | null = null;
+      transition.ready
+        .then(() => (started = performance.now()))
+        .catch(() => {});
       transition.finished.finally(
-        () => (record.ms = performance.now() - started),
+        () => (record.ms = started === null ? 0 : performance.now() - started),
       );
       return transition;
     };

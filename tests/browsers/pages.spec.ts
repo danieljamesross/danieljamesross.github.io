@@ -15,6 +15,18 @@ for (const route of staticRoutes()) {
       () => document.documentElement.scrollWidth - window.innerWidth,
     );
     expect(overflow).toBeLessThanOrEqual(0);
+
+    // Some browsers have no WebGL, such as Firefox on CI runners without a
+    // GPU. Blob then tells the visitor (and logs why) rather than running.
+    const webgl = await page.evaluate(
+      () => !!document.createElement("canvas").getContext("webgl"),
+    );
+    if (route === "/blob/" && !webgl) {
+      await expect(
+        page.getByText("Your browser can't show this piece: it needs WebGL."),
+      ).toBeVisible();
+      return;
+    }
     expect(errors).toEqual([]);
   });
 }
