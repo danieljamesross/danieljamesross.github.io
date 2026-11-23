@@ -10,6 +10,7 @@ served by GitHub Pages at <https://danieljamesross.github.io>.
 | `/portfolio/[slug]/` | One page per project                                         |
 | `/composition/`      | List of selected works                                       |
 | `/lines/`            | _Lines_, an interactive audiovisual piece (p5.js + p5.sound) |
+| `/blob/`             | _Blob_, a WebGL blob that plays an AudioWorklet synthesiser  |
 | `/cv/`               | CV                                                           |
 | `/contact/`          | Contact form (submissions handled by Netlify, see below)     |
 
@@ -84,12 +85,15 @@ src/
   app/
     (site)/          pages that share the site header and footer
     lines/           the Lines route (adds the site header, its own font and styles)
+    blob/            the Blob route
   assets/images/     project images (uploaded through Pages CMS)
   components/        shared site components
   content/projects/  one Markdown file per project
   lib/               site content (data.ts, cv.ts) and project loading
   lines/             the Lines piece: React components, p5 sketches, state, SCSS
+  blob/              the Blob piece: React components, WebGL scene, synth
 public/audio/        audio used by Lines
+public/worklets/     AudioWorklet processors, served as plain files
 netlify-form/        separate Netlify site that receives contact form posts
 scripts/             build and CI helpers (image optimisation, page discovery)
 ```
@@ -107,6 +111,19 @@ break:
   AudioWorklet processors once instead of once per sketch.
 - `P5Canvas` never calls `remove()` on a sketch torn down mid-preload:
   p5.sound's remove hook disposes _every_ sketch's sounds.
+
+### Blob
+
+_Blob_ is also entirely client-side, with no dependencies beyond React:
+
+- `blobScene.ts` ray-marches the blob in a WebGL fragment shader
+  (`shaders.ts`) and runs its spring physics and pointer handling. Its
+  `UV_TO_WORLD` must match `CAM_Z / FOCAL` in the shader.
+- The synth is generated sample by sample in
+  `public/worklets/saw-synth-processor.js`, an AudioWorklet that lives in
+  `public/` so it's served as-is rather than bundled. `blobSynth.ts` sets its
+  parameters from the blob and analyses its output; the spectrum is drawn
+  over the blob by `spectrumOverlay.ts` and passed to the shader to colour it.
 
 ## Deployment
 
