@@ -87,7 +87,7 @@ src/
     lines/           the Lines route (adds the site header, its own font and styles)
     blob/            the Blob route
   assets/images/     project images (uploaded through Pages CMS)
-  components/        shared site components
+  components/        shared site components (header, theme toggle, page transitions)
   content/projects/  one Markdown file per project
   lib/               site content (data.ts, cv.ts) and project loading
   lines/             the Lines piece: React components, p5 sketches, state, SCSS
@@ -124,6 +124,28 @@ _Blob_ is also entirely client-side, with no dependencies beyond React:
   `public/` so it's served as-is rather than bundled. `blobSynth.ts` sets its
   parameters from the blob and analyses its output; the spectrum is drawn
   over the blob by `spectrumOverlay.ts` and passed to the shader to colour it.
+
+### Motion and themes
+
+- **Timing scales with size.** Every transition and animation lasts a
+  minimum time plus a fixed amount per pixel of the moving element's
+  diagonal, up to a cap. The numbers are `--motion-*` in
+  `src/app/globals.css`. `MotionSizer` measures every link, button and
+  `data-motion` element and sets its `--motion-size`, which feeds Tailwind's
+  default transition duration, so plain `transition-*` utilities follow the
+  rule. Script-driven animations use `motionDuration()` in
+  `src/lib/motion.ts`.
+- **Page transitions** use React's `<ViewTransition>` (`PageTransition`).
+  Header links tag each navigation `nav-forward` or `nav-back` by nav order;
+  a project's image morphs between its card and its page. A
+  `<ViewTransition>` only animates when nothing above it is also being
+  added or removed, which is why it wraps both the `(site)` template's page
+  and each layout's `<main>`.
+- **The header** only ever moves with transforms, so compacting and hiding
+  it never shifts the page.
+- **Themes:** with no choice saved, the site follows the system. The toggle
+  saves one to `localStorage`, and `ThemeScript` applies it before the first
+  paint. `dark:` utilities are redefined in `globals.css` to follow both.
 
 ## Deployment
 

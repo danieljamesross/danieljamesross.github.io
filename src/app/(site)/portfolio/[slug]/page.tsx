@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import { ViewTransition } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import { notFound } from "next/navigation";
+import BackLink from "@/components/BackLink";
 import Tag from "@/components/Tag";
 import { getProject, getProjects } from "@/lib/projects";
 
@@ -36,12 +37,7 @@ export default async function ProjectPage({
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <Link
-        href="/"
-        className="font-mono text-sm text-black/60 hover:text-black dark:text-white/50 dark:hover:text-white"
-      >
-        ← All projects
-      </Link>
+      <BackLink href="/">All projects</BackLink>
 
       <h1 className="mt-4 mb-4 text-3xl font-semibold tracking-tight">
         {project.title}
@@ -53,20 +49,30 @@ export default async function ProjectPage({
         ))}
       </div>
 
-      <div className="relative mb-8 aspect-video w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/5">
-        <Image
-          src={project.image}
-          alt={project.imageAlt}
-          fill
-          sizes="(min-width: 768px) 768px, 100vw"
-          className="object-cover"
-          preload
-          fetchPriority="high"
-        />
-      </div>
+      {/* Morphs from the project's card (see ProjectCard). */}
+      <ViewTransition
+        name={`project-image-${project.slug}`}
+        share="morph"
+        default="none"
+      >
+        <div
+          data-morph
+          className="relative mb-8 aspect-video w-full overflow-hidden rounded-xl bg-black/5 dark:bg-white/5"
+        >
+          <Image
+            src={project.image}
+            alt={project.imageAlt}
+            fill
+            sizes="(min-width: 768px) 768px, 100vw"
+            className="object-cover"
+            preload
+            fetchPriority="high"
+          />
+        </div>
+      </ViewTransition>
 
       <div
-        className="flex max-w-2xl flex-col gap-4 text-black/80 dark:text-white/80 [&_a]:underline [&_a]:decoration-black/30 [&_a:hover]:decoration-black dark:[&_a]:decoration-white/30 dark:[&_a:hover]:decoration-white [&_h2]:mt-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-2 [&_h3]:font-semibold [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+        className="flex max-w-2xl flex-col gap-4 text-black/80 dark:text-white/80 [&_a]:underline [&_a]:decoration-black/30 [&_a]:transition-colors [&_a:hover]:decoration-black dark:[&_a]:decoration-white/30 dark:[&_a:hover]:decoration-white [&_h2]:mt-4 [&_h2]:text-xl [&_h2]:font-semibold [&_h3]:mt-2 [&_h3]:font-semibold [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
         // Rendered at build time from the project's Markdown file in this repo.
         dangerouslySetInnerHTML={{ __html: project.html }}
       />
@@ -79,7 +85,7 @@ export default async function ProjectPage({
               href={link.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="underline decoration-black/30 hover:decoration-black dark:decoration-white/30 dark:hover:decoration-white"
+              className="underline decoration-black/30 transition-colors hover:decoration-black dark:decoration-white/30 dark:hover:decoration-white"
             >
               {link.label} →
             </a>

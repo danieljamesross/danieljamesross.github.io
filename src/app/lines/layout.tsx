@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Alata } from "next/font/google";
+import PageTransition from "@/components/PageTransition";
 import SiteHeader from "@/components/SiteHeader";
 import "@/lines/styles/main.scss";
 
@@ -20,9 +21,11 @@ export default function LinesLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <SiteHeader />
-      <main className={`${alata.variable} flex flex-1 flex-col`}>
-        {children}
-      </main>
+      <PageTransition>
+        <main className={`${alata.variable} flex flex-1 flex-col`}>
+          {children}
+        </main>
+      </PageTransition>
     </>
   );
 }
