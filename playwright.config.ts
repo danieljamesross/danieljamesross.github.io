@@ -21,6 +21,9 @@ export default defineConfig({
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
   use: {
     baseURL: `http://localhost:${PORT}`,
+    // A trace (network, console, DOM over time) when a test fails once and
+    // is retried, to diagnose failures on CI runners.
+    trace: "on-first-retry",
   },
   projects: [
     // Light and dark mode render different colours, so check contrast in

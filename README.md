@@ -45,9 +45,12 @@ the static export in `out/`.
 
 The page checks list pages from `out/` via `scripts/static-routes.cjs`, so
 new pages are covered automatically. In CI the browser tests run in every
-engine on Linux, macOS and Windows runners, each as its own job (so a
-failure that only happens in Safari on Windows shows up as its own red
-check), against one shared build of the site. Lighthouse reports are written to
+engine on Linux, macOS and Windows runners, against one shared build of the
+site. On Linux and Windows each engine is its own job, so a failure that
+only happens in Safari on Windows shows up as its own red check; macOS runs
+them all in one job, since GitHub's macOS runners are often short of
+capacity. A failing test is retried once with a trace, which is uploaded
+with the results. Lighthouse reports are written to
 `.lighthouseci/` and uploaded as a workflow artifact.
 
 ## Editing content

@@ -74,25 +74,45 @@ jobs:
       # Report every combination's failures, not just the first.
       fail-fast: false
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-        browser: [Chrome, Firefox, Safari]
         include:
           - os: ubuntu-latest
             os-name: Linux
-          - os: macos-latest
-            os-name: macOS
-          - os: windows-latest
-            os-name: Windows
-          - browser: Chrome
+            browser: Chrome
             engine: chromium
             projects: --project=chrome --project=mobile-chrome
-          - browser: Firefox
+          - os: ubuntu-latest
+            os-name: Linux
+            browser: Firefox
             engine: firefox
             projects: --project=firefox
           # Playwright's Safari is WebKit, the engine Safari is built on.
-          - browser: Safari
+          - os: ubuntu-latest
+            os-name: Linux
+            browser: Safari
             engine: webkit
             projects: --project=safari --project=mobile-safari
+          - os: windows-latest
+            os-name: Windows
+            browser: Chrome
+            engine: chromium
+            projects: --project=chrome --project=mobile-chrome
+          - os: windows-latest
+            os-name: Windows
+            browser: Firefox
+            engine: firefox
+            projects: --project=firefox
+          - os: windows-latest
+            os-name: Windows
+            browser: Safari
+            engine: webkit
+            projects: --project=safari --project=mobile-safari
+          # GitHub's macOS runners are often short of capacity, and queued jobs
+          # get cancelled, so macOS runs every engine in one job.
+          - os: macos-latest
+            os-name: macOS
+            browser: Every browser
+            engine: chromium firefox webkit
+            projects: --project=chrome --project=mobile-chrome --project=firefox --project=safari --project=mobile-safari
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -109,7 +129,7 @@ jobs:
       - if: failure()
         uses: actions/upload-artifact@v4
         with:
-          name: playwright-results-${{ matrix.engine }}-${{ matrix.os }}
+          name: playwright-results-${{ matrix.browser }}-${{ matrix.os }}
           path: test-results/
           retention-days: 14
 

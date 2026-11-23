@@ -10,6 +10,11 @@ for (const route of staticRoutes()) {
 
     await expect(nav(page)).toBeVisible();
     await expect(page.locator("main")).toBeVisible();
+    // Blob loads separately after the page; it always draws a canvas, even
+    // when it then explains it can't run.
+    if (route === "/blob/") {
+      await expect(page.locator("main canvas").first()).toBeAttached();
+    }
     // Nothing pokes out sideways, on any screen size.
     const overflow = await page.evaluate(
       () => document.documentElement.scrollWidth - window.innerWidth,
