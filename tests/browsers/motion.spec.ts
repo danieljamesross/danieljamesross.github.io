@@ -1,5 +1,5 @@
 import { expect, test, type Locator, type Page } from "@playwright/test";
-import { nav } from "./support";
+import { hydrated, nav, settled } from "./support";
 
 // Hover doesn't exist on touch screens.
 test.skip(({ isMobile }) => isMobile, "needs a mouse");
@@ -35,14 +35,8 @@ async function motionOf(element: Locator) {
 
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
-  // MotionSizer runs once the page has hydrated.
-  await expect
-    .poll(() =>
-      page.evaluate(() =>
-        document.documentElement.style.getPropertyValue("--page-size"),
-      ),
-    )
-    .not.toBe("");
+  // MotionSizer measures once the page has hydrated.
+  await hydrated(page);
 });
 
 test("transitions take longer the bigger the element", async ({ page }) => {
@@ -105,7 +99,7 @@ test.describe("with reduced motion", () => {
   test("cards don't move on hover", async ({ page }) => {
     const card = page.getByRole("link", { name: /^Giant Leap/ });
     await card.hover();
-    await page.waitForTimeout(400);
+    await settled(page);
     await expect(card).toHaveCSS("translate", "none");
   });
 });

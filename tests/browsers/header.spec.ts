@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { headerState, nav, scrollBy } from "./support";
+import { headerState, nav, scrollBy, settled } from "./support";
 
 // The compact bar's height (--bar in globals.css).
 const BAR = 56;
@@ -59,7 +59,7 @@ test("keyboard focus brings it back in full", async ({ page }) => {
     if (await focusInHeader()) break;
   }
   expect(await focusInHeader()).toBe(true);
-  await page.waitForTimeout(800);
+  await settled(page);
   const title = page.getByRole("link", {
     name: "Daniel James Ross arty codey",
   });

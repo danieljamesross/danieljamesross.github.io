@@ -1,0 +1,20 @@
+name: Set up Node and dependencies
+description: >
+  Installs Node and the npm dependencies, reusing a cached node_modules when
+  package-lock.json hasn't changed.
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    # Keyed by OS and architecture too: some packages (sharp) install native
+    # binaries.
+    - id: modules
+      uses: actions/cache@v4
+      with:
+        path: node_modules
+        key: node-modules-${{ runner.os }}-${{ runner.arch }}-node22-${{ hashFiles('package-lock.json') }}
+    - if: steps.modules.outputs.cache-hit != 'true'
+      run: npm ci --no-audit --no-fund
+      shell: bash

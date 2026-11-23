@@ -1,12 +1,13 @@
 import { expect, test } from "@playwright/test";
 import { staticRoutes } from "../../scripts/static-routes.cjs";
-import { collectErrors, nav } from "./support";
+import { collectErrors, hydrated, nav } from "./support";
 
 for (const route of staticRoutes()) {
   test(`${route} loads cleanly`, async ({ page }) => {
     const errors = collectErrors(page);
     await page.goto(route);
-    await page.waitForLoadState("networkidle");
+    // Once hydrated, the app's code has run, and any error it hit is in.
+    await hydrated(page);
 
     await expect(nav(page)).toBeVisible();
     await expect(page.locator("main")).toBeVisible();

@@ -7,6 +7,13 @@ const { staticRoutes } = require("./scripts/static-routes.cjs");
 
 const PORT = 4173;
 
+// CI splits the pages between parallel jobs: LIGHTHOUSE_SHARD="2/3" audits
+// the second of three shares. Unset, it audits every page.
+const [shard, shards] = (process.env.LIGHTHOUSE_SHARD ?? "1/1")
+  .split("/")
+  .map(Number);
+const routes = staticRoutes().filter((_, i) => i % shards === shard - 1);
+
 module.exports = {
   ci: {
     collect: {
@@ -14,7 +21,7 @@ module.exports = {
       // plain static server.
       startServerCommand: `npx serve out --listen ${PORT} --no-clipboard`,
       startServerReadyPattern: "Accepting connections",
-      url: staticRoutes().map((route) => `http://localhost:${PORT}${route}`),
+      url: routes.map((route) => `http://localhost:${PORT}${route}`),
       numberOfRuns: 1,
       settings: {
         chromeFlags: "--no-sandbox",

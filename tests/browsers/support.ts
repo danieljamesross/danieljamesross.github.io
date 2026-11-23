@@ -83,15 +83,43 @@ export async function headerState(page: Page) {
   }));
 }
 
-/** Scrolls by `dy` px in steps, as a person would, then lets transitions end. */
+/**
+ * Waits for React to hydrate the page: MotionSizer, which runs then, sets
+ * --page-size on <html>.
+ */
+export async function hydrated(page: Page) {
+  await page.waitForFunction(
+    () => document.documentElement.style.getPropertyValue("--page-size") !== "",
+  );
+}
+
+/**
+ * Waits for whatever the last change set moving to stop: two frames, so its
+ * transitions have started, then until no animation is running. Faster and
+ * steadier than sleeping for the longest transition.
+ */
+export async function settled(page: Page) {
+  await page.evaluate(
+    () =>
+      new Promise((resolve) =>
+        requestAnimationFrame(() => requestAnimationFrame(resolve)),
+      ),
+  );
+  await page.waitForFunction(() =>
+    document.getAnimations().every((a) => a.playState !== "running"),
+  );
+}
+
+/** Scrolls by `dy` px over a few frames, as a person would, then settles. */
 export async function scrollBy(page: Page, dy: number) {
-  const steps = 6;
-  for (let i = 0; i < steps; i++) {
-    await page.evaluate((step) => window.scrollBy(0, step), dy / steps);
-    await page.waitForTimeout(30);
-  }
-  // Longer than the longest transition (--motion-max).
-  await page.waitForTimeout(800);
+  await page.evaluate(async (dy) => {
+    const steps = 6;
+    for (let i = 0; i < steps; i++) {
+      window.scrollBy(0, dy / steps);
+      await new Promise(requestAnimationFrame);
+    }
+  }, dy);
+  await settled(page);
 }
 
 export const NAV = [

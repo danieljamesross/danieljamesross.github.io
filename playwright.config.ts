@@ -18,6 +18,10 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 1 : 0,
+  // Playwright defaults to half the cores on CI, which on GitHub's 3-core
+  // macOS runners is a single worker. The tests wait on the page rather
+  // than the clock, so they hold up with every core busy.
+  workers: process.env.CI ? "100%" : undefined,
   reporter: process.env.CI ? [["github"], ["list"]] : "list",
   use: {
     baseURL: `http://localhost:${PORT}`,
