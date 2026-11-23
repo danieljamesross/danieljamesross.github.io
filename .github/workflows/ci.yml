@@ -12,33 +12,55 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# Everything that tests the site tests one build of it, made by the build
+# job: the static export is the same whichever OS builds it. Dependencies,
+# Next's build cache and Playwright's browsers are cached between runs (see
+# .github/actions).
 jobs:
   lint:
     name: Lint, format and types
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+      - uses: ./.github/actions/setup
       - run: npm run lint
       - run: npm run format:check
       - run: npm run typecheck
 
-  accessibility:
-    name: Accessibility (axe, every page)
+  build:
+    name: Build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup
+      # Next reuses compiled modules from here; any older cache is a useful
+      # start when the code has changed.
+      - uses: actions/cache@v4
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
+          path: .next/cache
+          key: next-${{ hashFiles('package-lock.json') }}-${{ hashFiles('src/**', 'public/**', '*.ts', '*.mjs') }}
+          restore-keys: next-${{ hashFiles('package-lock.json') }}-
       - run: npm run build
-      - run: npx playwright install --with-deps chromium
+      - uses: actions/upload-artifact@v4
+        with:
+          name: site
+          path: out/
+          retention-days: 1
+
+  accessibility:
+    name: Accessibility (axe, every page)
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: out/
+      - uses: ./.github/actions/playwright
+        with:
+          browsers: chromium
       - run: npm run test:a11y
       - if: failure()
         uses: actions/upload-artifact@v4
@@ -47,21 +69,94 @@ jobs:
           path: test-results/
           retention-days: 14
 
-  lighthouse:
-    name: Lighthouse (every page)
-    runs-on: ubuntu-latest
+  browsers:
+    name: ${{ matrix.browser }} on ${{ matrix.os-name }}
+    needs: build
+    runs-on: ${{ matrix.os }}
+    strategy:
+      # Report every combination's failures, not just the first.
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            os-name: Linux
+            browser: Chrome
+            engine: chromium
+            projects: --project=chrome --project=mobile-chrome
+          - os: ubuntu-latest
+            os-name: Linux
+            browser: Firefox
+            engine: firefox
+            projects: --project=firefox
+          # Playwright's Safari is WebKit, the engine Safari is built on.
+          - os: ubuntu-latest
+            os-name: Linux
+            browser: Safari
+            engine: webkit
+            projects: --project=safari --project=mobile-safari
+          - os: windows-latest
+            os-name: Windows
+            browser: Chrome
+            engine: chromium
+            projects: --project=chrome --project=mobile-chrome
+          - os: windows-latest
+            os-name: Windows
+            browser: Firefox
+            engine: firefox
+            projects: --project=firefox
+          - os: windows-latest
+            os-name: Windows
+            browser: Safari
+            engine: webkit
+            projects: --project=safari --project=mobile-safari
+          # GitHub's macOS runners are often short of capacity, and queued jobs
+          # get cancelled, so macOS runs every engine in one job.
+          - os: macos-latest
+            os-name: macOS
+            browser: Every browser
+            engine: chromium firefox webkit
+            projects: --project=chrome --project=mobile-chrome --project=firefox --project=safari --project=mobile-safari
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v4
         with:
-          node-version: 22
-          cache: npm
-      - run: npm ci
-      - run: npm run build
+          name: site
+          path: out/
+      - uses: ./.github/actions/playwright
+        with:
+          browsers: ${{ matrix.engine }}
+      - run: npx playwright test ${{ matrix.projects }}
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results-${{ matrix.browser }}-${{ matrix.os }}
+          path: test-results/
+          retention-days: 14
+
+  lighthouse:
+    name: Lighthouse (pages, share ${{ matrix.shard }} of 3)
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Lighthouse audits one page at a time, so split the pages between
+        # three jobs (see lighthouserc.cjs).
+        shard: [1, 2, 3]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup
+      - uses: actions/download-artifact@v4
+        with:
+          name: site
+          path: out/
       - run: npm run lighthouse
+        env:
+          LIGHTHOUSE_SHARD: ${{ matrix.shard }}/3
       - if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: lighthouse-reports
+          name: lighthouse-reports-${{ matrix.shard }}
           path: .lighthouseci/
           retention-days: 14

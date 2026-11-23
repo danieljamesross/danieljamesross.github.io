@@ -12,7 +12,8 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "next typegen && tsc --noEmit",
-    "test:a11y": "playwright test",
+    "test:a11y": "playwright test --project=light --project=dark",
+    "test:browsers": "playwright test --project=chrome --project=firefox --project=safari --project=mobile-chrome --project=mobile-safari",
     "lighthouse": "lhci autorun --config=lighthouserc.cjs"
   },
   "dependencies": {
