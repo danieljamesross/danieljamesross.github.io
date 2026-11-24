@@ -87,13 +87,17 @@ test("pieces with their own layouts transition too", async ({
     "Playwright's Windows build of WebKit crashes leaving Lines; WebKit on " +
       "macOS and Linux passes, and there's no Safari for Windows",
   );
+  // On a starved CPU this is slow: React reveals Blob only once the page
+  // transition ends, and Blob then sets up its WebGL software renderer. In
+  // WebKit for Linux with two CPUs shared by four pages, transitions took up
+  // to 10s to finish and Blob up to 15s to appear (it's ~1s unloaded), and
+  // GitHub's runners are slower still. Loading speed is pages.spec.ts's
+  // concern; this checks the transitions happen.
+  test.slow();
   await navLink(page, "Blob").click();
   await expect(page).toHaveURL("/blob/");
-  // Blob appears about 0.4s after the click on a typical machine, but up to
-  // ~6s in Firefox on GitHub's GPU-less Windows runners, which render the
-  // page transition on a slow CPU. Loading speed is pages.spec.ts's concern.
   await expect(page.locator("main canvas").first()).toBeAttached({
-    timeout: 15_000,
+    timeout: 45_000,
   });
   await navLink(page, "Lines").click();
   await expect(page).toHaveURL("/lines/");

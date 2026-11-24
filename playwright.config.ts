@@ -22,6 +22,10 @@ export default defineConfig({
   // runners is a single worker. Two everywhere keeps Linux and Windows as
   // they were; every core overloaded the runners and made WebKit flaky.
   workers: process.env.CI ? 2 : undefined,
+  // CI runners have no GPU and little CPU, and WebKit there can take several
+  // seconds to capture a page for a view transition before the next page
+  // commits. Assertions still pass as soon as they hold.
+  expect: { timeout: process.env.CI ? 15_000 : 5_000 },
   // On CI, a JSON report too, for the results comment (scripts/ci-report.mjs).
   reporter: process.env.CI
     ? [
