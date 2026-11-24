@@ -1,11 +1,19 @@
 import { expect, test, type Page } from "@playwright/test";
 import { finishedTransitions, recordViewTransitions } from "./support";
 
-const LIGHT = "rgb(255, 255, 255)";
-const DARK = "rgb(10, 10, 10)";
+const LIGHT = "light";
+const DARK = "dark";
 
+/** Whether the page's background is light or dark. Browsers write OKLCH
+ *  colours back in different forms, so it's painted to a pixel and read. */
 const background = (page: Page) =>
-  page.evaluate(() => getComputedStyle(document.body).backgroundColor);
+  page.evaluate(() => {
+    const context = document.createElement("canvas").getContext("2d")!;
+    context.fillStyle = getComputedStyle(document.body).backgroundColor;
+    context.fillRect(0, 0, 1, 1);
+    const [r, g, b] = context.getImageData(0, 0, 1, 1).data;
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b > 128 ? "light" : "dark";
+  });
 const toggle = (page: Page) => page.getByRole("button", { name: "Dark mode" });
 
 /** Waits out the theme toggle's reveal, if the browser runs one. */

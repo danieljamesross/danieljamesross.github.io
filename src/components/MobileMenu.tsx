@@ -163,11 +163,11 @@ export default function MobileMenu({
                   instantClose.current = true;
                   onClose();
                 }}
-                className="group/item flex items-baseline gap-4 py-2 text-4xl font-semibold tracking-tight text-black/70 transition-colors hover:text-black aria-[current=page]:text-black dark:text-white/70 dark:hover:text-white dark:aria-[current=page]:text-white"
+                className="group/item flex items-baseline gap-4 py-2 text-4xl font-semibold tracking-tight text-muted transition-colors hover:text-foreground aria-[current=page]:text-foreground"
               >
                 <span
                   aria-hidden
-                  className="w-6 font-mono text-sm font-normal text-black/60 dark:text-white/50"
+                  className="w-6 font-mono text-sm font-normal text-accent-ink"
                 >
                   {String(i + 1).padStart(2, "0")}
                 </span>
@@ -175,17 +175,14 @@ export default function MobileMenu({
                   {link.label}
                   <span
                     aria-hidden
-                    className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 bg-current transition-transform group-hover/item:scale-x-100 group-aria-[current=page]/item:scale-x-100"
+                    className="absolute inset-x-0 -bottom-0.5 h-0.5 origin-left scale-x-0 bg-accent transition-transform group-hover/item:scale-x-100 group-aria-[current=page]/item:scale-x-100"
                   />
                 </span>
               </Link>
             </li>
           ))}
         </ul>
-        <p
-          data-menu-item
-          className="mt-10 font-mono text-sm text-black/60 dark:text-white/50"
-        >
+        <p data-menu-item className="mt-10 font-mono text-sm text-muted">
           arty codey
         </p>
       </nav>

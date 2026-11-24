@@ -3,11 +3,10 @@
 // on. Field names must match the form definition in netlify-form/index.html.
 export const CONTACT_FORM_SITE = "https://danieljamesross-contact.netlify.app";
 
-const LABEL_CLASS =
-  "mb-1 block font-mono text-sm text-black/60 dark:text-white/50";
+const LABEL_CLASS = "mb-1 block font-mono text-sm text-muted";
 
 const INPUT_CLASS =
-  "w-full rounded-md border border-black/15 bg-transparent px-3 py-2 text-sm outline-none transition-colors focus:border-black/50 dark:border-white/20 dark:focus:border-white/60";
+  "w-full rounded-md border border-line bg-surface px-3 py-2 text-sm outline-none transition-colors focus:border-accent";
 
 export default function ContactForm() {
   return (
@@ -79,7 +78,7 @@ export default function ContactForm() {
       <div>
         <button
           type="submit"
-          className="rounded-md border border-black/80 px-4 py-2 font-mono text-sm transition-colors hover:bg-black hover:text-white dark:border-white/80 dark:hover:bg-white dark:hover:text-black"
+          className="rounded-md bg-accent-ink px-4 py-2 font-mono text-sm text-background shadow-sm shadow-shadow transition-[box-shadow,translate] hover:shadow-md motion-safe:hover:-translate-y-px"
         >
           Send message
         </button>

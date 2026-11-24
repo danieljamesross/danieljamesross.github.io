@@ -110,7 +110,7 @@ export default function ThemeToggle({
       aria-label="Dark mode"
       aria-pressed={dark ?? undefined}
       onClick={toggle}
-      className={`group/theme grid size-8 place-items-center rounded-full text-black/70 transition-colors hover:bg-black/5 hover:text-black dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white ${className}`}
+      className={`group/theme grid size-8 place-items-center rounded-full text-muted transition-colors hover:bg-surface hover:text-foreground ${className}`}
     >
       {/* Shows the theme you'd switch to. Drawn inline rather than with Font
           Awesome, which would otherwise load on every page with the header. */}

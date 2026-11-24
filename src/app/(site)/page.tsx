@@ -4,7 +4,7 @@ import { getProjects } from "@/lib/projects";
 export default function Home() {
   return (
     <div className="mx-auto max-w-4xl px-6 py-12">
-      <p className="mb-10 max-w-2xl text-black/70 dark:text-white/70">
+      <p className="mb-10 max-w-2xl text-muted">
         Composer, improviser, and sound artist working across electronics,
         algorithmic composition, and live performance. A selection of projects,
         collaborations, and commissions.

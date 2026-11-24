@@ -16,7 +16,7 @@ export default function ProjectCard({
     <Link
       href={`/portfolio/${project.slug}`}
       transitionTypes={["nav-forward"]}
-      className="group flex flex-col overflow-hidden rounded-xl border border-black/10 transition-[border-color,box-shadow,translate] hover:border-black/30 hover:shadow-lg hover:shadow-black/5 motion-safe:hover:-translate-y-1 dark:border-white/15 dark:hover:border-white/40 dark:hover:shadow-black/40"
+      className="group flex flex-col overflow-hidden rounded-xl border border-line bg-surface shadow-sm shadow-shadow transition-[border-color,box-shadow,translate] hover:border-accent/50 hover:shadow-lg hover:shadow-shadow motion-safe:hover:-translate-y-1"
     >
       {/* Morphs into the image at the top of the project's page. */}
       <ViewTransition
@@ -27,7 +27,7 @@ export default function ProjectCard({
         <div
           data-morph
           data-motion
-          className="relative aspect-video w-full overflow-hidden bg-black/5 dark:bg-white/5"
+          className="relative aspect-video w-full overflow-hidden bg-surface"
         >
           <Image
             src={project.image}
@@ -41,12 +41,10 @@ export default function ProjectCard({
         </div>
       </ViewTransition>
       <div className="flex flex-1 flex-col gap-3 p-5">
-        <h2 className="text-lg font-semibold tracking-tight">
+        <h2 className="text-lg font-semibold tracking-tight transition-colors group-hover:text-accent-ink">
           {project.title}
         </h2>
-        <p className="flex-1 text-sm text-black/70 dark:text-white/70">
-          {project.excerpt}
-        </p>
+        <p className="flex-1 text-sm text-muted">{project.excerpt}</p>
         <div className="flex flex-wrap gap-2 pt-1">
           {project.tags.slice(0, 4).map((tag) => (
             <Tag key={tag}>{tag}</Tag>

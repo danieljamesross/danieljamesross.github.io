@@ -129,7 +129,7 @@ export default function SiteHeader() {
     >
       <div
         aria-hidden
-        className="site-header__backdrop absolute inset-0 -z-10 border-b border-black/10 bg-background/85 backdrop-blur-md dark:border-white/15"
+        className="site-header__backdrop absolute inset-0 -z-10 border-b border-line bg-background/85 backdrop-blur-md"
       />
       {/* One row: on phones the name, theme toggle and menu button; wider,
           the name, nav and theme toggle. */}
@@ -143,7 +143,7 @@ export default function SiteHeader() {
           <h1 className="site-header__name text-2xl font-semibold tracking-tight">
             Daniel James Ross
           </h1>
-          <p className="site-header__subtitle font-mono text-sm text-black/60 dark:text-white/50">
+          <p className="site-header__subtitle font-mono text-sm text-muted">
             arty codey
           </p>
         </Link>
@@ -158,7 +158,7 @@ export default function SiteHeader() {
                   href={link.href}
                   transitionTypes={link.transitionTypes}
                   aria-current={link.current ? "page" : undefined}
-                  className="relative flex h-8 items-center whitespace-nowrap text-black/70 transition-colors after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform hover:text-black hover:after:scale-x-100 aria-[current=page]:text-black aria-[current=page]:after:scale-x-100 dark:text-white/70 dark:hover:text-white dark:aria-[current=page]:text-white"
+                  className="relative flex h-8 items-center whitespace-nowrap text-muted transition-colors after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-accent after:transition-transform hover:text-foreground hover:after:scale-x-100 aria-[current=page]:text-foreground aria-[current=page]:after:scale-x-100"
                 >
                   {link.label}
                 </Link>
@@ -174,7 +174,7 @@ export default function SiteHeader() {
           aria-expanded={menuOpen}
           aria-controls="site-menu"
           onClick={() => setMenuOpen((open) => !open)}
-          className="group/menu pointer-events-auto relative grid size-8 place-items-center rounded-full text-black/70 transition-colors hover:bg-black/5 hover:text-black aria-expanded:text-black sm:hidden dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white dark:aria-expanded:text-white"
+          className="group/menu pointer-events-auto relative grid size-8 place-items-center rounded-full text-muted transition-colors hover:bg-surface hover:text-foreground aria-expanded:text-foreground sm:hidden"
         >
           <MenuIcon open={menuOpen} />
         </button>
