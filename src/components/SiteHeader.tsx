@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import MenuIcon from "./MenuIcon";
 import MobileMenu from "./MobileMenu";
 import ThemeToggle from "./ThemeToggle";
 
@@ -175,13 +176,7 @@ export default function SiteHeader() {
           onClick={() => setMenuOpen((open) => !open)}
           className="group/menu pointer-events-auto relative grid size-8 place-items-center rounded-full text-black/70 transition-colors hover:bg-black/5 hover:text-black aria-expanded:text-black sm:hidden dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white dark:aria-expanded:text-white"
         >
-          {/* Three bars that fold into a cross: the middle one slides away
-              while the outer two turn and meet in the middle. */}
-          <span aria-hidden className="relative block h-3.5 w-5">
-            <span className="absolute top-0 left-0 h-0.5 w-5 rounded-full bg-current transition-[translate,rotate] group-aria-expanded/menu:translate-y-1.5 group-aria-expanded/menu:rotate-45" />
-            <span className="absolute top-1.5 left-0 h-0.5 w-5 origin-right rounded-full bg-current transition-[scale,opacity] group-aria-expanded/menu:scale-x-0 group-aria-expanded/menu:opacity-0" />
-            <span className="absolute top-3 left-0 h-0.5 w-5 rounded-full bg-current transition-[translate,rotate] group-aria-expanded/menu:-translate-y-1.5 group-aria-expanded/menu:-rotate-45" />
-          </span>
+          <MenuIcon open={menuOpen} />
         </button>
       </div>
       <MobileMenu
