@@ -36,9 +36,9 @@ function P5CanvasImpl({
     const container = containerRef.current;
     if (!container) return undefined;
 
-    // p5's remove() is a no-op while preload() is still pending, so an
-    // instance torn down mid-load would otherwise still run setup() later
-    // and append an orphan canvas. Calling remove() at that point isn't an
+    // p5's remove() is a no-op until the instance has started, so one torn
+    // down before then would otherwise still run setup() later and append
+    // an orphan canvas. Calling remove() at that point isn't an
     // option either: p5.sound's remove hook disposes every sketch's sounds.
     let removed = false;
     const guardedSketch = (s: LinesSketch) => {

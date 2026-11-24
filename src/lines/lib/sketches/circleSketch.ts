@@ -1,6 +1,7 @@
 import p5 from "./p5Sound";
 import { getAudioContext } from "./helpers/audioContext";
 import { handlePlayRecord } from "./helpers/gestureController";
+import { loadLoopingSound } from "./helpers/loopingSound";
 import { drawPositionMarker } from "./helpers/positionMarker";
 import type { LinesSketch } from "./types";
 
@@ -16,21 +17,16 @@ export function circleSketch(s: LinesSketch): void {
   const position = { x: s.mouseX, y: s.mouseY };
   let audioContext: AudioContext;
 
-  s.preload = () => {
-    s.mySound = s.loadSound([
-      "/audio/lines/choir.mp3",
-      "/audio/lines/choir.ogg",
-      "/audio/lines/choir.m4a",
-    ]);
-  };
-
   s.setup = () => {
     const { canvasCircleWidth = 300, canvasCircleHeight = 300 } = s.state;
     s.createCanvas(canvasCircleWidth, canvasCircleHeight).class("circ");
     audioContext = getAudioContext(s);
     s.userStartAudio();
-    s.mySound.setLoop(true);
-    s.mySound.setVolume(0);
+    s.mySound = loadLoopingSound(s, [
+      "/audio/lines/choir.mp3",
+      "/audio/lines/choir.ogg",
+      "/audio/lines/choir.m4a",
+    ]);
     analyzer = new p5.Amplitude();
     analyzer.setInput(s.mySound);
   };

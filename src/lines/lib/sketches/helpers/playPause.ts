@@ -4,6 +4,9 @@ import { getAudioContext } from "./audioContext";
 export function setPlaying(sketch: LinesSketch, play: boolean): boolean {
   const playing = sketch.mySound.isPlaying();
 
+  // Still loading: the sketch asks again every frame, so it starts as soon
+  // as the sound arrives.
+  if (play && !playing && !sketch.mySound.isLoaded()) return false;
   if (play && !playing) {
     getAudioContext(sketch).resume();
     sketch.mySound.setVolume(0);

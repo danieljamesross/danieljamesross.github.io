@@ -1,6 +1,7 @@
 import p5 from "./p5Sound";
 import { getAudioContext } from "./helpers/audioContext";
 import { handlePlayRecord } from "./helpers/gestureController";
+import { loadLoopingSound } from "./helpers/loopingSound";
 import { drawPositionMarker } from "./helpers/positionMarker";
 import type { LinesSketch } from "./types";
 
@@ -16,21 +17,16 @@ export function horizSketch(s: LinesSketch): void {
   const position = { x: s.mouseX, y: s.mouseY };
   let audioContext: AudioContext;
 
-  s.preload = () => {
-    s.mySound = s.loadSound([
-      "/audio/lines/clm-lids.mp3",
-      "/audio/lines/clm-lids.ogg",
-      "/audio/lines/clm-lids.m4a",
-    ]);
-  };
-
   s.setup = () => {
     const { canvasHorizWidth = 100, canvasHorizHeight = 300 } = s.state;
     s.createCanvas(canvasHorizWidth, canvasHorizHeight).class("horiz");
     audioContext = getAudioContext(s);
     s.userStartAudio();
-    s.mySound.setLoop(true);
-    s.mySound.setVolume(0);
+    s.mySound = loadLoopingSound(s, [
+      "/audio/lines/clm-lids.mp3",
+      "/audio/lines/clm-lids.ogg",
+      "/audio/lines/clm-lids.m4a",
+    ]);
     analyzer = new p5.Amplitude();
     analyzer.setInput(s.mySound);
   };
