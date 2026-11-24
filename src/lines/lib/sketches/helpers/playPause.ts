@@ -22,3 +22,13 @@ export function setPlaying(sketch: LinesSketch, play: boolean): boolean {
   }
   return false;
 }
+
+/**
+ * Fades a sketch's sound out without suspending the AudioContext, which
+ * every sketch plays through, so the others carry on.
+ */
+export function silence(sketch: LinesSketch): void {
+  if (!sketch.mySound?.isPlaying()) return;
+  sketch.mySound.setVolume(0, 0.01);
+  sketch.mySound.pause(0.02);
+}
