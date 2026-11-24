@@ -95,10 +95,12 @@ CMS commits to the repository, which redeploys the site.
   file changes its URL.
 - **Images** are uploaded to `src/assets/images/` and referenced as
   `/images/<name>`. `scripts/optimize-images.mjs` runs before every
-  `npm run dev` and `npm run build` and writes resized WebP copies to
+  `npm run dev` and `npm run build` and writes resized AVIF copies to
   `public/_images/` (gitignored), which `src/lib/imageLoader.ts` points
-  `next/image` at. Keep images reasonably light: the first projects' images
-  are the biggest factor in the home page's Lighthouse performance score.
+  `next/image` at. Images are always shown cropped to 16:9, so the copies
+  are cropped to their middle 16:9 too: frame the subject there. Keep images
+  reasonably light: the first project's image is the biggest factor in the
+  home page's Lighthouse performance score.
 - **Text** is Markdown. Images can't be placed inside the text.
 
 ### Everything else

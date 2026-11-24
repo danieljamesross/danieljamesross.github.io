@@ -12,7 +12,7 @@ export default function ContactThanksPage() {
       <h1 className="mb-6 text-2xl font-semibold tracking-tight">
         Message sent
       </h1>
-      <p className="mb-8 max-w-xl text-black/70 dark:text-white/70">
+      <p className="mb-8 max-w-xl text-muted">
         Thanks for getting in touch. I&apos;ll get back to you soon.
       </p>
       <BackLink href="/">Back to projects</BackLink>

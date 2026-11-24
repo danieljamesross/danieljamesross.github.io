@@ -2,25 +2,57 @@
 
 /* ------------------------------------------------------------------ Theme */
 
-/* Light by default. Dark follows the system unless someone has picked a
+/* Colour follows the 60:30:10 rule. 60% is a warm neutral: the page itself,
+   paper in light mode and charcoal in dark. 30% is slate blue, orange's
+   complement, in the text, lines and surfaces around the content. 10% is
+   burnt orange, kept for what should catch the eye: links, the current
+   page, hover and focus, and the one button.
+
+   Every pair used for text meets WCAG AA in both themes. `accent` is for
+   fills, underlines and rings; orange text uses `accent-ink`, which is
+   darker in light mode so it stays readable. `faint` is decoration only.
+
+   Light by default. Dark follows the system unless someone has picked a
    theme with the toggle, which sets data-theme on <html> (see ThemeScript). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: oklch(0.975 0.009 80);
+  --surface: oklch(0.952 0.012 75);
+  --foreground: oklch(0.3 0.035 255);
+  --muted: oklch(0.47 0.03 255);
+  --faint: oklch(0.63 0.025 255);
+  --line: oklch(0.885 0.016 250);
+  --accent: oklch(0.66 0.16 50);
+  --accent-ink: oklch(0.53 0.15 42);
+  --shadow: oklch(0.3 0.04 255 / 0.1);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: oklch(0.205 0.012 60);
+    --surface: oklch(0.245 0.016 250);
+    --foreground: oklch(0.935 0.014 80);
+    --muted: oklch(0.78 0.022 250);
+    --faint: oklch(0.6 0.02 250);
+    --line: oklch(0.34 0.022 250);
+    --accent: oklch(0.76 0.14 60);
+    --accent-ink: oklch(0.78 0.13 62);
+    --shadow: oklch(0.12 0.01 60 / 0.5);
     color-scheme: dark;
   }
 }
 
+/* The same as above, for a chosen dark theme. */
 :root[data-theme="dark"] {
-  --background: #0a0a0a;
-  --foreground: #ededed;
+  --background: oklch(0.205 0.012 60);
+  --surface: oklch(0.245 0.016 250);
+  --foreground: oklch(0.935 0.014 80);
+  --muted: oklch(0.78 0.022 250);
+  --faint: oklch(0.6 0.02 250);
+  --line: oklch(0.34 0.022 250);
+  --accent: oklch(0.76 0.14 60);
+  --accent-ink: oklch(0.78 0.13 62);
+  --shadow: oklch(0.12 0.01 60 / 0.5);
   color-scheme: dark;
 }
 
@@ -41,7 +73,14 @@
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
   --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-faint: var(--faint);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-accent-ink: var(--accent-ink);
+  --color-shadow: var(--shadow);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -52,9 +91,21 @@
   --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
 }
 
+/* A faint warm glow from the top of the page, so it isn't a flat sheet. */
 body {
-  background: var(--background);
+  background:
+    radial-gradient(
+      80rem 40rem at 15% -10rem,
+      color-mix(in oklch, var(--accent) 7%, transparent),
+      color-mix(in oklch, var(--accent) 3%, transparent) 40%,
+      transparent 75%
+    ),
+    var(--background);
   color: var(--foreground);
+}
+
+::selection {
+  background: color-mix(in oklch, var(--accent) 30%, transparent);
 }
 
 a {
@@ -62,6 +113,12 @@ a {
 }
 
 @layer base {
+  /* In base, so a component's own focus style still wins. */
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
   /* Tailwind leaves buttons with the browser's default arrow. */
   button:not(:disabled),
   [role="button"]:not(:disabled) {

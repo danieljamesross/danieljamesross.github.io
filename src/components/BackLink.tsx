@@ -12,7 +12,7 @@ export default function BackLink({
     <Link
       href={href}
       transitionTypes={["nav-back"]}
-      className="group/back font-mono text-sm text-black/60 transition-colors hover:text-black dark:text-white/50 dark:hover:text-white"
+      className="group/back font-mono text-sm text-muted transition-colors hover:text-foreground"
     >
       <span
         aria-hidden
