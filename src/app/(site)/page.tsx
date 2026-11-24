@@ -11,8 +11,11 @@ export default function Home() {
       </p>
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
         {getProjects().map((project, i) => (
-          // The first row is above the fold on every layout.
-          <ProjectCard key={project.slug} project={project} preload={i < 2} />
+          // The first card is the largest thing above the fold on every
+          // layout. Its neighbour on wider screens is the same size, so it
+          // can't become the LCP, and preloading it would only take
+          // bandwidth from the one that is.
+          <ProjectCard key={project.slug} project={project} preload={i === 0} />
         ))}
       </div>
     </div>

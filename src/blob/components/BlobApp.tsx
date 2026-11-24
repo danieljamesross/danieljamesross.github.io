@@ -1,14 +1,39 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faVolumeMute, faVolumeUp } from "@fortawesome/free-solid-svg-icons";
+import {
+  faVolumeMute,
+  faVolumeUp,
+  type IconDefinition,
+} from "@fortawesome/free-solid-svg-icons";
 import BlobScene from "@/blob/lib/blobScene";
 import BlobSynth from "@/blob/lib/blobSynth";
 
 const HINT =
   "Drag the blob · press around it to pull it out of shape · scroll to roughen";
 
+/** A Font Awesome icon drawn inline. Its React component sizes icons with CSS
+ *  injected from script, so rendered on the server they'd jump on hydrating. */
+function Icon({ icon }: { icon: IconDefinition }) {
+  const [width, height, , , path] = icon.icon;
+  return (
+    <svg
+      viewBox={`0 0 ${width} ${height}`}
+      aria-hidden
+      className="h-[1em] w-auto fill-current"
+    >
+      {[path].flat().map((d) => (
+        <path key={d} d={d} />
+      ))}
+    </svg>
+  );
+}
+
+/**
+ * The Blob piece. Its frame, controls and hint are rendered with the page, so
+ * they show at once; the scene and synth need WebGL and Web Audio, so they
+ * start in the browser.
+ */
 export default function BlobApp() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const overlayRef = useRef<HTMLCanvasElement>(null);
@@ -108,7 +133,7 @@ export default function BlobApp() {
         aria-pressed={muted}
         onClick={toggleMute}
       >
-        <FontAwesomeIcon icon={muted ? faVolumeMute : faVolumeUp} aria-hidden />
+        <Icon icon={muted ? faVolumeMute : faVolumeUp} />
       </button>
       <p
         className={`pointer-events-none absolute inset-x-4 bottom-6 text-center font-mono text-sm transition-opacity duration-[1500ms] ${

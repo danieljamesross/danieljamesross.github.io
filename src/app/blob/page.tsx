@@ -1,5 +1,5 @@
-import BlobAppLoader from "@/blob/components/BlobAppLoader";
+import BlobApp from "@/blob/components/BlobApp";
 
 export default function BlobPage() {
-  return <BlobAppLoader />;
+  return <BlobApp />;
 }
