@@ -1,7 +1,8 @@
 "use client";
 
-import { useSyncExternalStore, type MouseEvent } from "react";
+import { useRef, useSyncExternalStore, type MouseEvent } from "react";
 import { motionDuration, prefersReducedMotion } from "@/lib/motion";
+import ThemeIcon, { animateThemeIcon } from "./ThemeIcon";
 import { THEME_KEY } from "./ThemeScript";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
@@ -36,7 +37,7 @@ function setTheme(theme: "light" | "dark") {
 /**
  * Switches between light and dark. Where view transitions are supported the
  * new theme spreads out from the button in a circle, taking longer the
- * further it has to reach.
+ * further it has to reach, while the icon turns into the other one.
  */
 export default function ThemeToggle({
   className = "",
@@ -45,10 +46,14 @@ export default function ThemeToggle({
 }) {
   // Unknown until hydrated, since the server can't see the visitor's theme.
   const dark = useSyncExternalStore(subscribe, isDark, () => null);
+  const icon = useRef<SVGSVGElement>(null);
+  const iconAnimations = useRef<Animation[]>([]);
 
   const toggle = (e: MouseEvent<HTMLButtonElement>) => {
     const next = isDark() ? "light" : "dark";
-    if (!document.startViewTransition || prefersReducedMotion()) {
+    iconAnimations.current.forEach((animation) => animation.cancel());
+    iconAnimations.current = [];
+    if (prefersReducedMotion()) {
       setTheme(next);
       return;
     }
@@ -60,10 +65,25 @@ export default function ThemeToggle({
       Math.max(x, innerWidth - x),
       Math.max(y, innerHeight - y),
     );
+    const duration = motionDuration(radius);
+    // Started with the change, so the icon never shows the new pose first.
+    const change = () => {
+      setTheme(next);
+      if (icon.current)
+        iconAnimations.current = animateThemeIcon(
+          icon.current,
+          next === "dark",
+          duration,
+        );
+    };
+    if (!document.startViewTransition) {
+      change();
+      return;
+    }
 
     const root = document.documentElement;
     root.dataset.themeSwitching = "";
-    const transition = document.startViewTransition(() => setTheme(next));
+    const transition = document.startViewTransition(change);
     transition.ready
       .then(() =>
         root.animate(
@@ -74,7 +94,7 @@ export default function ThemeToggle({
             ],
           },
           {
-            duration: motionDuration(radius),
+            duration,
             easing: "cubic-bezier(0.16, 1, 0.3, 1)",
             pseudoElement: "::view-transition-new(root)",
           },
@@ -94,21 +114,10 @@ export default function ThemeToggle({
     >
       {/* Shows the theme you'd switch to. Drawn inline rather than with Font
           Awesome, which would otherwise load on every page with the header. */}
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden
-        className="size-4 fill-current transition-transform motion-safe:group-hover/theme:-rotate-12 dark:hidden"
-      >
-        <path d="M20.5 14.6A8.5 8.5 0 0 1 9.4 3.5a8.5 8.5 0 1 0 11.1 11.1Z" />
-      </svg>
-      <svg
-        viewBox="0 0 24 24"
-        aria-hidden
-        className="hidden size-4 fill-none stroke-current stroke-2 transition-transform [stroke-linecap:round] motion-safe:group-hover/theme:rotate-45 dark:block"
-      >
-        <circle cx="12" cy="12" r="4" className="fill-current" />
-        <path d="M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4" />
-      </svg>
+      <ThemeIcon
+        ref={icon}
+        className="size-4 transition-transform motion-safe:group-hover/theme:-rotate-12 motion-safe:dark:group-hover/theme:rotate-45"
+      />
     </button>
   );
 }
