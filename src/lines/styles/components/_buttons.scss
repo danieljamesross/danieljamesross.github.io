@@ -89,6 +89,15 @@
     border-radius: 50%;
   }
 
+  // Font Awesome 7 draws icons 1.25em wide, which turned the round ring
+  // around the record button into an oval. Square in both states, so it
+  // doesn't change size when recording starts.
+  .record,
+  .recording {
+    width: 1em;
+    height: 1em;
+  }
+
   .record:active,
   .record:hover,
   .recording:active,
