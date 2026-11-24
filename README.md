@@ -153,6 +153,10 @@ _Blob_ is also entirely client-side, with no dependencies beyond React:
   `public/` so it's served as-is rather than bundled. `blobSynth.ts` sets its
   parameters from the blob and analyses its output; the spectrum is drawn
   over the blob by `spectrumOverlay.ts` and passed to the shader to colour it.
+- Ray-marching costs per pixel, and phones' GPUs vary enormously, so the
+  resolution adapts (`adaptiveResolution.ts`): it drops while frames come
+  slower than the display refreshes and climbs back when there's headroom.
+  Touch screens also start from at most 1.5× their pixel ratio.
 
 ### Motion and themes
 
@@ -171,7 +175,9 @@ _Blob_ is also entirely client-side, with no dependencies beyond React:
   added or removed, which is why it wraps both the `(site)` template's page
   and each layout's `<main>`.
 - **The header** only ever moves with transforms, so compacting and hiding
-  it never shifts the page.
+  it never shifts the page. On phones the nav moves into `MobileMenu`, a
+  full-screen panel that grows out of the menu button; while it's open the
+  page behind is inert and Escape closes it.
 - **Themes:** with no choice saved, the site follows the system. The toggle
   saves one to `localStorage`, and `ThemeScript` applies it before the first
   paint. `dark:` utilities are redefined in `globals.css` to follow both.

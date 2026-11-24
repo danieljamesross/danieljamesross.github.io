@@ -1,3 +1,4 @@
+import AdaptiveResolution from "./adaptiveResolution";
 import type BlobSynth from "./blobSynth";
 import SpectrumOverlay from "./spectrumOverlay";
 import { vertexShader, fragmentShader } from "./shaders";
@@ -6,6 +7,10 @@ import { vertexShader, fragmentShader } from "./shaders";
 // world coordinates on the z = 0 plane the blob lives on.
 const UV_TO_WORLD = 6.0 / 1.8;
 const MAX_PIXELS = 1600 * 1000;
+// Most of a ray-marched frame's cost is per pixel, and phones' screens are
+// dense while their GPUs are modest. A soft, glossy blob loses little.
+const MAX_PIXEL_RATIO = 2;
+const TOUCH_MAX_PIXEL_RATIO = 1.5;
 // Without a GPU the browser ray-marches on the CPU, which at full size takes
 // seconds a frame and can hang the page, so render far fewer pixels.
 const SOFTWARE_MAX_PIXELS = 60 * 1000;
@@ -73,6 +78,10 @@ export default class BlobScene {
   // Everything the last drawn frame showed, so a frame that would look the
   // same can be skipped. A still, silent blob costs nothing to leave up.
   private drawn: number[] = [];
+  private drewLast = false;
+  // Lowers the resolution while frames come slower than the display
+  // refreshes, and raises it again when there's headroom.
+  private resolution = new AdaptiveResolution();
 
   // Blob physics state, all in world units.
   private center = { x: 0, y: 0 };
@@ -162,7 +171,11 @@ export default class BlobScene {
     const { canvas } = this;
     const w = canvas.clientWidth;
     const h = canvas.clientHeight;
-    let scale = Math.min(window.devicePixelRatio || 1, 2);
+    const maxRatio = matchMedia("(pointer: coarse)").matches
+      ? TOUCH_MAX_PIXEL_RATIO
+      : MAX_PIXEL_RATIO;
+    let scale =
+      Math.min(window.devicePixelRatio || 1, maxRatio) * this.resolution.scale;
     // Ray marching is per pixel, so keep the pixel count in check.
     if (w * h * scale * scale > this.maxPixels) {
       scale = Math.sqrt(this.maxPixels / (w * h));
@@ -365,6 +378,10 @@ export default class BlobScene {
   }
 
   private frame = (now: number) => {
+    if (this.resolution.frame(now - this.last, this.drewLast, now)) {
+      this.resize();
+    }
+    this.drewLast = false;
     // rAF timestamps can be slightly behind performance.now() on the first
     // frame.
     const dt = clamp((now - this.last) / 1000, 0, 1 / 20);
@@ -401,6 +418,7 @@ export default class BlobScene {
     if (look.some((v, i) => !(Math.abs(v - this.drawn[i]) < 1e-4))) {
       this.drawn = look;
       this.draw();
+      this.drewLast = true;
     }
 
     this.raf = requestAnimationFrame(this.frame);

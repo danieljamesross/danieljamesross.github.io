@@ -274,7 +274,7 @@ a {
   }
 }
 
-.site-header[data-hidden]:not(:has(:focus-visible)) {
+.site-header[data-hidden]:not([data-menu-open], :has(:focus-visible)) {
   translate: 0 -100%;
 }
 

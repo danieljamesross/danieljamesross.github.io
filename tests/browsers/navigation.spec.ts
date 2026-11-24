@@ -1,8 +1,9 @@
 import { expect, test, type Page } from "@playwright/test";
 import {
   collectErrors,
+  closeNav,
   finishedTransitions,
-  nav,
+  navLink,
   recordViewTransitions,
 } from "./support";
 
@@ -18,9 +19,6 @@ const markDocument = (page: Page) =>
 const sameDocument = (page: Page) =>
   page.evaluate(() => window.__sameDocument === true);
 
-const navLink = (page: Page, name: string) =>
-  nav(page).getByRole("link", { name, exact: true });
-
 test.beforeEach(async ({ page }) => {
   await recordViewTransitions(page);
   await page.goto("/");
@@ -30,18 +28,21 @@ test.beforeEach(async ({ page }) => {
 });
 
 test("header links slide forward and back by nav order", async ({ page }) => {
-  await navLink(page, "CV").click();
+  await (await navLink(page, "CV")).click();
   await expect(page).toHaveURL("/cv/");
   await expect(
     page.getByRole("heading", { name: "CV", level: 1 }),
   ).toBeVisible();
-  await expect(navLink(page, "CV")).toHaveAttribute("aria-current", "page");
+  await expect(await navLink(page, "CV")).toHaveAttribute(
+    "aria-current",
+    "page",
+  );
   const [slide] = await finishedTransitions(page, { timed: true });
   expect(slide.types).toEqual(["nav-forward"]);
   // Long enough to see (the exact timing is checked in motion.spec.ts).
   expect(slide.ms).toBeGreaterThan(300);
 
-  await navLink(page, "Composition").click();
+  await (await navLink(page, "Composition")).click();
   await expect(page).toHaveURL("/composition/");
   await expect(
     page.getByRole("heading", { name: "Composition", level: 1 }),
@@ -62,10 +63,11 @@ test("a project opens from its card and goes back", async ({ page }) => {
   ).toBeVisible();
   await expect(page.getByRole("img", { name: "Giant Leap" })).toBeVisible();
   // Projects stays current on a project's page.
-  await expect(navLink(page, "Projects")).toHaveAttribute(
+  await expect(await navLink(page, "Projects")).toHaveAttribute(
     "aria-current",
     "page",
   );
+  await closeNav(page);
 
   await page.getByRole("link", { name: "All projects" }).click();
   await expect(page).toHaveURL("/");
@@ -94,14 +96,14 @@ test("pieces with their own layouts transition too", async ({
   // GitHub's runners are slower still. Loading speed is pages.spec.ts's
   // concern; this checks the transitions happen.
   test.slow();
-  await navLink(page, "Blob").click();
+  await (await navLink(page, "Blob")).click();
   await expect(page).toHaveURL("/blob/");
   await expect(page.locator("main canvas").first()).toBeAttached({
     timeout: 45_000,
   });
-  await navLink(page, "Lines").click();
+  await (await navLink(page, "Lines")).click();
   await expect(page).toHaveURL("/lines/");
-  await navLink(page, "Composition").click();
+  await (await navLink(page, "Composition")).click();
   await expect(page).toHaveURL("/composition/");
   expect(await finishedTransitions(page)).toEqual([
     ["nav-forward"],
@@ -112,12 +114,12 @@ test("pieces with their own layouts transition too", async ({
 });
 
 test("the browser's back and forward buttons work", async ({ page }) => {
-  await navLink(page, "Composition").click();
+  await (await navLink(page, "Composition")).click();
   await expect(page).toHaveURL("/composition/");
   await page.goBack();
   await expect(page).toHaveURL("/");
   await expect(page.getByRole("link", { name: /^Giant Leap/ })).toBeVisible();
-  await expect(navLink(page, "Projects")).toHaveAttribute(
+  await expect(await navLink(page, "Projects")).toHaveAttribute(
     "aria-current",
     "page",
   );
@@ -128,12 +130,12 @@ test("the browser's back and forward buttons work", async ({ page }) => {
 });
 
 test("reduced motion makes page changes near-instant", async ({ page }) => {
-  await navLink(page, "CV").click();
+  await (await navLink(page, "CV")).click();
   await expect(page).toHaveURL("/cv/");
   const [normal] = await finishedTransitions(page, { timed: true });
 
   await page.emulateMedia({ reducedMotion: "reduce" });
-  await navLink(page, "Composition").click();
+  await (await navLink(page, "Composition")).click();
   await expect(page).toHaveURL("/composition/");
   const [, reduced] = await finishedTransitions(page, { timed: true });
 

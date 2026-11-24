@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { staticRoutes } from "../../scripts/static-routes.cjs";
-import { collectErrors, hydrated, nav } from "./support";
+import { collectErrors, hydrated, menuButton, nav } from "./support";
 
 for (const route of staticRoutes()) {
   test(`${route} loads cleanly`, async ({ page }) => {
@@ -9,7 +9,8 @@ for (const route of staticRoutes()) {
     // Once hydrated, the app's code has run, and any error it hit is in.
     await hydrated(page);
 
-    await expect(nav(page)).toBeVisible();
+    // The nav, or on phones the button that opens it.
+    await expect(nav(page).or(menuButton(page))).toBeVisible();
     await expect(page.locator("main")).toBeVisible();
     // Blob loads separately after the page; it always draws a canvas, even
     // when it then explains it can't run.

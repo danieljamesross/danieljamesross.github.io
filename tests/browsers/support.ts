@@ -139,3 +139,38 @@ export const NAV = [
 
 export const nav = (page: Page) =>
   page.getByRole("navigation", { name: "Main" });
+
+export const menuButton = (page: Page) =>
+  page.getByRole("button", { name: "Menu" });
+
+/**
+ * The site's main nav, ready to use: inline on wider screens, and on phones
+ * in the menu, which this opens.
+ */
+export async function openNav(page: Page) {
+  const button = menuButton(page);
+  if (
+    (await button.isVisible()) &&
+    (await button.getAttribute("aria-expanded")) !== "true"
+  ) {
+    await button.click();
+  }
+  return nav(page);
+}
+
+/** Closes the phone menu, if it's open, to get back to the page. */
+export async function closeNav(page: Page) {
+  const button = menuButton(page);
+  if (
+    (await button.isVisible()) &&
+    (await button.getAttribute("aria-expanded")) === "true"
+  ) {
+    await page.keyboard.press("Escape");
+    await expect(page.locator("#site-menu")).toHaveCount(0);
+  }
+}
+
+/** A link in the main nav, opening the menu first on phones. */
+export async function navLink(page: Page, name: string) {
+  return (await openNav(page)).getByRole("link", { name, exact: true });
+}
