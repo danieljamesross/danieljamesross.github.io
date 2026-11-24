@@ -15,9 +15,9 @@ export function setPlaying(sketch: LinesSketch, play: boolean): boolean {
     return true;
   }
   if (!play && playing) {
-    sketch.mySound.setVolume(0, 0.01);
-    sketch.mySound.pause(0.02);
-    getAudioContext(sketch).suspend();
+    // Only this sketch's sound: suspending the AudioContext here, as it
+    // used to, also cut out every other sketch and blanked their lines.
+    silence(sketch);
     return false;
   }
   return false;

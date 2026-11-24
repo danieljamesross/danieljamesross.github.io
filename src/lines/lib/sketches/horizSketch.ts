@@ -38,43 +38,48 @@ export function horizSketch(s: LinesSketch): void {
   s.draw = () => {
     s.clear();
 
-    if (audioContext.state === "suspended" && s.p5playing) {
+    if (!s.p5playing) return;
+
+    if (audioContext.state === "suspended") {
       audioContext.resume();
     }
 
-    if (audioContext.state === "running" && s.p5playing) {
+    // Gestures and sound wait for audio to be running, but the lines are
+    // drawn every frame regardless: skipping them blanked every sketch for
+    // a few frames whenever the AudioContext they share paused.
+    if (audioContext.state === "running") {
       handlePlayRecord(s, position, gesture, {
         widthKey: "canvasHorizWidth",
         heightKey: "canvasHorizHeight",
         xDivisor: 100,
         yDivisor: 300,
       });
+    }
 
-      const {
-        canvasHorizWidth = 100,
-        canvasHorizHeight = 300,
-        playGesture,
-        horizColour,
-      } = s.state;
+    const {
+      canvasHorizWidth = 100,
+      canvasHorizHeight = 300,
+      playGesture,
+      horizColour,
+    } = s.state;
 
-      if (playGesture) {
-        s.resizeCanvas(canvasHorizWidth * rms, canvasHorizHeight * rms);
-        s.dispatch({ type: "SET_HORIZ_RMS", payload: rms });
-        s.background(horizColour);
-      } else {
-        s.resizeCanvas(canvasHorizWidth, canvasHorizHeight);
-        s.clear();
-      }
+    if (playGesture) {
+      s.resizeCanvas(canvasHorizWidth * rms, canvasHorizHeight * rms);
+      s.dispatch({ type: "SET_HORIZ_RMS", payload: rms });
+      s.background(horizColour);
+    } else {
+      s.resizeCanvas(canvasHorizWidth, canvasHorizHeight);
+      s.clear();
+    }
 
-      drawLines();
+    drawLines();
 
-      if (s.mySound.isPlaying()) {
-        moveLines();
-        if (s.state.showGesture) drawPositionMarker(s, position.x, position.y);
-        s.mySound.rate(speed);
-      } else {
-        resetLines();
-      }
+    if (s.mySound.isPlaying()) {
+      moveLines();
+      if (s.state.showGesture) drawPositionMarker(s, position.x, position.y);
+      s.mySound.rate(speed);
+    } else {
+      resetLines();
     }
   };
 
