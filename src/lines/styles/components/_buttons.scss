@@ -21,14 +21,29 @@
     color: $lines-yellow;
   }
 
+  // Colour changes take the site's size-based time (see "Motion" in
+  // src/app/globals.css); --motion-duration comes from the enclosing button
+  // or link.
+  .faIcon,
+  .faIconFooter {
+    transition: color var(--motion-duration, 150ms);
+  }
+
   // Full-strength yellow: the translucent $lines-yellow is under 4.5:1
   // against $lines-blue, which is too low for text.
   a {
     color: $lines-yellow-active;
   }
 
-  button:hover,
-  button:active {
+  // Text buttons fill with yellow on hover. Icon controls are buttons too,
+  // but their icons change colour instead (below): filling them drew a
+  // yellow box behind each icon, and hid the yellow ones entirely.
+  button:not(.icon-button) {
+    transition: background-color var(--motion-duration, 150ms);
+  }
+
+  button:not(.icon-button):hover,
+  button:not(.icon-button):active {
     background-color: $lines-yellow-active;
   }
 
