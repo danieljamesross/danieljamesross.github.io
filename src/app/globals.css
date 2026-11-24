@@ -108,7 +108,6 @@ body {
   background: color-mix(in oklch, var(--accent) 30%, transparent);
 }
 
-
 a {
   text-underline-offset: 3px;
 }
