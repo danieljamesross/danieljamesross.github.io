@@ -29,6 +29,8 @@ export function reducer(state: AppState, action: Action): AppState {
         showMenu: true,
       };
 
+    // Back to the start, with the controls START gives: the recording can be
+    // played again (and paused), or a new one recorded.
     case "END":
       return {
         ...state,
@@ -38,10 +40,13 @@ export function reducer(state: AppState, action: Action): AppState {
         sketchAudio4: true,
         sketchAudio5: true,
         startButton: false,
-        recordButton: false,
-        playButton: false,
+        recordButton: true,
+        playButton: true,
+        pauseButton: false,
         clearButton: true,
-        checkbox: false,
+        checkbox: true,
+        slider: 0,
+        sliderMax: 100,
         speedScaler: 1,
         sectionNum: 0,
         showTitle: false,

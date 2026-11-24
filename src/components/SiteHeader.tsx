@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import MobileMenu from "./MobileMenu";
 import ThemeToggle from "./ThemeToggle";
 
 const NAV_LINKS = [
@@ -80,11 +81,38 @@ function useScrollState(header: RefObject<HTMLElement | null>) {
   return state;
 }
 
+// Below Tailwind's `sm` breakpoint the nav moves into MobileMenu.
+const PHONE = "(max-width: 639.98px)";
+
 export default function SiteHeader() {
   const pathname = usePathname();
   const here = currentIndex(pathname);
   const ref = useRef<HTMLElement>(null);
   const { compact, hidden } = useScrollState(ref);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const closeMenu = () => setMenuOpen(false);
+  // Any change of page closes it, including the browser's back button.
+  const [menuPage, setMenuPage] = useState(pathname);
+  if (pathname !== menuPage) {
+    setMenuPage(pathname);
+    setMenuOpen(false);
+  }
+
+  // Widening past the breakpoint brings the inline nav back.
+  useEffect(() => {
+    if (!menuOpen) return;
+    const phone = matchMedia(PHONE);
+    const onChange = () => !phone.matches && setMenuOpen(false);
+    phone.addEventListener("change", onChange);
+    return () => phone.removeEventListener("change", onChange);
+  }, [menuOpen]);
+
+  const links = NAV_LINKS.map((link, i) => ({
+    ...link,
+    transitionTypes: transitionTypes(i, here),
+    current: i === here,
+  }));
 
   return (
     <header
@@ -92,6 +120,7 @@ export default function SiteHeader() {
       data-motion
       data-compact={compact || undefined}
       data-hidden={hidden || undefined}
+      data-menu-open={menuOpen || undefined}
       // Only its children take clicks: while it's a bar, the rest of its
       // box is empty and the page underneath should still be clickable.
       className="site-header pointer-events-none sticky top-0 z-40"
@@ -101,11 +130,14 @@ export default function SiteHeader() {
         aria-hidden
         className="site-header__backdrop absolute inset-0 -z-10 border-b border-black/10 bg-background/85 backdrop-blur-md dark:border-white/15"
       />
-      <div className="site-header__inner mx-auto grid max-w-4xl grid-cols-[1fr_auto] gap-x-6 gap-y-4 px-6 py-8 sm:grid-cols-[1fr_auto_auto] sm:items-end">
+      {/* One row: on phones the name, theme toggle and menu button; wider,
+          the name, nav and theme toggle. */}
+      <div className="site-header__inner mx-auto grid max-w-4xl grid-cols-[1fr_auto_auto] items-end gap-x-4 px-6 py-8 sm:gap-x-6">
         <Link
           href="/"
           transitionTypes={transitionTypes(0, here)}
-          className="pointer-events-auto col-start-1 row-start-1 justify-self-start"
+          onClick={closeMenu}
+          className="pointer-events-auto justify-self-start"
         >
           <h1 className="site-header__name text-2xl font-semibold tracking-tight">
             Daniel James Ross
@@ -114,22 +146,17 @@ export default function SiteHeader() {
             arty codey
           </p>
         </Link>
-        <ThemeToggle className="pointer-events-auto col-start-2 row-start-1 self-start sm:col-start-3 sm:self-end" />
         <nav
           aria-label="Main"
-          // On narrow screens the links scroll sideways rather than wrap, so
-          // the bar stays one row; the fade hints there's more.
-          className="pointer-events-auto col-span-2 row-start-2 -mx-6 overflow-x-auto pl-6 [mask-image:linear-gradient(to_right,black_calc(100%-1.5rem),transparent)] [scrollbar-width:none] sm:col-span-1 sm:col-start-2 sm:row-start-1 sm:mx-0 sm:overflow-visible sm:pl-0 sm:[mask-image:none]"
+          className="pointer-events-auto hidden sm:col-start-2 sm:block"
         >
-          {/* The end padding is on the list so it scrolls in after the last link
-              rather than staying under the fade. */}
-          <ul className="flex w-max gap-6 pr-6 font-mono text-sm sm:w-auto sm:pr-0">
-            {NAV_LINKS.map((link, i) => (
+          <ul className="flex gap-6 font-mono text-sm">
+            {links.map((link) => (
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  transitionTypes={transitionTypes(i, here)}
-                  aria-current={i === here ? "page" : undefined}
+                  transitionTypes={link.transitionTypes}
+                  aria-current={link.current ? "page" : undefined}
                   className="relative flex h-8 items-center whitespace-nowrap text-black/70 transition-colors after:absolute after:inset-x-0 after:bottom-1 after:h-px after:origin-left after:scale-x-0 after:bg-current after:transition-transform hover:text-black hover:after:scale-x-100 aria-[current=page]:text-black aria-[current=page]:after:scale-x-100 dark:text-white/70 dark:hover:text-white dark:aria-[current=page]:text-white"
                 >
                   {link.label}
@@ -138,7 +165,31 @@ export default function SiteHeader() {
             ))}
           </ul>
         </nav>
+        <ThemeToggle className="pointer-events-auto sm:col-start-3" />
+        <button
+          ref={menuButton}
+          type="button"
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          aria-controls="site-menu"
+          onClick={() => setMenuOpen((open) => !open)}
+          className="group/menu pointer-events-auto relative grid size-8 place-items-center rounded-full text-black/70 transition-colors hover:bg-black/5 hover:text-black aria-expanded:text-black sm:hidden dark:text-white/70 dark:hover:bg-white/10 dark:hover:text-white dark:aria-expanded:text-white"
+        >
+          {/* Three bars that fold into a cross: the middle one slides away
+              while the outer two turn and meet in the middle. */}
+          <span aria-hidden className="relative block h-3.5 w-5">
+            <span className="absolute top-0 left-0 h-0.5 w-5 rounded-full bg-current transition-[translate,rotate] group-aria-expanded/menu:translate-y-1.5 group-aria-expanded/menu:rotate-45" />
+            <span className="absolute top-1.5 left-0 h-0.5 w-5 origin-right rounded-full bg-current transition-[scale,opacity] group-aria-expanded/menu:scale-x-0 group-aria-expanded/menu:opacity-0" />
+            <span className="absolute top-3 left-0 h-0.5 w-5 rounded-full bg-current transition-[translate,rotate] group-aria-expanded/menu:-translate-y-1.5 group-aria-expanded/menu:-rotate-45" />
+          </span>
+        </button>
       </div>
+      <MobileMenu
+        open={menuOpen}
+        links={links}
+        button={menuButton}
+        onClose={closeMenu}
+      />
     </header>
   );
 }

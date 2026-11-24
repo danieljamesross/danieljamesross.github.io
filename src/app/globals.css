@@ -61,6 +61,14 @@ a {
   text-underline-offset: 3px;
 }
 
+@layer base {
+  /* Tailwind leaves buttons with the browser's default arrow. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
 /* ----------------------------------------------------------------- Motion */
 
 /* Everything that moves takes longer the bigger it is: a minimum time plus
@@ -274,7 +282,7 @@ a {
   }
 }
 
-.site-header[data-hidden]:not(:has(:focus-visible)) {
+.site-header[data-hidden]:not([data-menu-open], :has(:focus-visible)) {
   translate: 0 -100%;
 }
 

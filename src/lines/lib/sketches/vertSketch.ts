@@ -1,6 +1,7 @@
 import p5 from "./p5Sound";
 import { getAudioContext } from "./helpers/audioContext";
 import { handlePlayRecord } from "./helpers/gestureController";
+import { loadLoopingSound } from "./helpers/loopingSound";
 import { drawPositionMarker } from "./helpers/positionMarker";
 import type { LinesSketch } from "./types";
 
@@ -16,21 +17,16 @@ export function vertSketch(s: LinesSketch): void {
   const position = { x: s.mouseX, y: s.mouseY };
   let audioContext: AudioContext;
 
-  s.preload = () => {
-    s.mySound = s.loadSound([
-      "/audio/lines/sferics.mp3",
-      "/audio/lines/sferics.ogg",
-      "/audio/lines/sferics.m4a",
-    ]);
-  };
-
   s.setup = () => {
     const { canvasVertWidth = 300, canvasVertHeight = 100 } = s.state;
     s.createCanvas(canvasVertWidth, canvasVertHeight).class("vert");
     audioContext = getAudioContext(s);
     s.userStartAudio();
-    s.mySound.setLoop(true);
-    s.mySound.setVolume(0);
+    s.mySound = loadLoopingSound(s, [
+      "/audio/lines/sferics.mp3",
+      "/audio/lines/sferics.ogg",
+      "/audio/lines/sferics.m4a",
+    ]);
     analyzer = new p5.Amplitude();
     analyzer.setInput(s.mySound);
   };
@@ -38,43 +34,48 @@ export function vertSketch(s: LinesSketch): void {
   s.draw = () => {
     s.clear();
 
-    if (audioContext.state === "suspended" && s.p5playing) {
+    if (!s.p5playing) return;
+
+    if (audioContext.state === "suspended") {
       audioContext.resume();
     }
 
-    if (audioContext.state === "running" && s.p5playing) {
+    // Gestures and sound wait for audio to be running, but the lines are
+    // drawn every frame regardless: skipping them blanked every sketch for
+    // a few frames whenever the AudioContext they share paused.
+    if (audioContext.state === "running") {
       handlePlayRecord(s, position, gesture, {
         widthKey: "canvasVertWidth",
         heightKey: "canvasVertHeight",
         xDivisor: 300,
         yDivisor: 100,
       });
+    }
 
-      const {
-        canvasVertWidth = 300,
-        canvasVertHeight = 100,
-        playGesture,
-        vertColour,
-      } = s.state;
+    const {
+      canvasVertWidth = 300,
+      canvasVertHeight = 100,
+      playGesture,
+      vertColour,
+    } = s.state;
 
-      if (playGesture) {
-        s.resizeCanvas(canvasVertWidth * rms, canvasVertHeight * rms);
-        s.dispatch({ type: "SET_VERT_RMS", payload: rms });
-        s.background(vertColour);
-      } else {
-        s.resizeCanvas(canvasVertWidth, canvasVertHeight);
-        s.clear();
-      }
+    if (playGesture) {
+      s.resizeCanvas(canvasVertWidth * rms, canvasVertHeight * rms);
+      s.dispatch({ type: "SET_VERT_RMS", payload: rms });
+      s.background(vertColour);
+    } else {
+      s.resizeCanvas(canvasVertWidth, canvasVertHeight);
+      s.clear();
+    }
 
-      drawLines();
+    drawLines();
 
-      if (s.mySound.isPlaying()) {
-        moveLines();
-        if (s.state.showGesture) drawPositionMarker(s, position.x, position.y);
-        s.mySound.rate(speed);
-      } else {
-        resetLines();
-      }
+    if (s.mySound.isPlaying()) {
+      moveLines();
+      if (s.state.showGesture) drawPositionMarker(s, position.x, position.y);
+      s.mySound.rate(speed);
+    } else {
+      resetLines();
     }
   };
 

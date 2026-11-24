@@ -1,6 +1,7 @@
 import p5 from "./p5Sound";
 import { getAudioContext } from "./helpers/audioContext";
 import { handlePlayRecord } from "./helpers/gestureController";
+import { loadLoopingSound } from "./helpers/loopingSound";
 import { drawPositionMarker } from "./helpers/positionMarker";
 import type { LinesSketch } from "./types";
 
@@ -16,21 +17,16 @@ export function circleSketch(s: LinesSketch): void {
   const position = { x: s.mouseX, y: s.mouseY };
   let audioContext: AudioContext;
 
-  s.preload = () => {
-    s.mySound = s.loadSound([
-      "/audio/lines/choir.mp3",
-      "/audio/lines/choir.ogg",
-      "/audio/lines/choir.m4a",
-    ]);
-  };
-
   s.setup = () => {
     const { canvasCircleWidth = 300, canvasCircleHeight = 300 } = s.state;
     s.createCanvas(canvasCircleWidth, canvasCircleHeight).class("circ");
     audioContext = getAudioContext(s);
     s.userStartAudio();
-    s.mySound.setLoop(true);
-    s.mySound.setVolume(0);
+    s.mySound = loadLoopingSound(s, [
+      "/audio/lines/choir.mp3",
+      "/audio/lines/choir.ogg",
+      "/audio/lines/choir.m4a",
+    ]);
     analyzer = new p5.Amplitude();
     analyzer.setInput(s.mySound);
   };
@@ -38,43 +34,48 @@ export function circleSketch(s: LinesSketch): void {
   s.draw = () => {
     s.clear();
 
-    if (audioContext.state === "suspended" && s.p5playing) {
+    if (!s.p5playing) return;
+
+    if (audioContext.state === "suspended") {
       audioContext.resume();
     }
 
-    if (audioContext.state === "running" && s.p5playing) {
+    // Gestures and sound wait for audio to be running, but the lines are
+    // drawn every frame regardless: skipping them blanked every sketch for
+    // a few frames whenever the AudioContext they share paused.
+    if (audioContext.state === "running") {
       handlePlayRecord(s, position, gesture, {
         widthKey: "canvasCircleWidth",
         heightKey: "canvasCircleHeight",
         xDivisor: 300,
         yDivisor: 300,
       });
+    }
 
-      const {
-        canvasCircleWidth = 300,
-        canvasCircleHeight = 300,
-        playGesture,
-        circColour,
-      } = s.state;
+    const {
+      canvasCircleWidth = 300,
+      canvasCircleHeight = 300,
+      playGesture,
+      circColour,
+    } = s.state;
 
-      if (playGesture) {
-        s.resizeCanvas(canvasCircleWidth * rms, canvasCircleWidth * rms);
-        s.dispatch({ type: "SET_CIRC_RMS", payload: rms });
-        s.background(circColour);
-      } else {
-        s.resizeCanvas(canvasCircleWidth, canvasCircleHeight);
-        s.clear();
-      }
+    if (playGesture) {
+      s.resizeCanvas(canvasCircleWidth * rms, canvasCircleWidth * rms);
+      s.dispatch({ type: "SET_CIRC_RMS", payload: rms });
+      s.background(circColour);
+    } else {
+      s.resizeCanvas(canvasCircleWidth, canvasCircleHeight);
+      s.clear();
+    }
 
-      drawCircles();
+    drawCircles();
 
-      if (s.mySound.isPlaying()) {
-        moveCircles();
-        if (s.state.showGesture) drawPositionMarker(s, position.x, position.y);
-        s.mySound.rate(speed * s.state.speedScaler);
-      } else {
-        resetCircles();
-      }
+    if (s.mySound.isPlaying()) {
+      moveCircles();
+      if (s.state.showGesture) drawPositionMarker(s, position.x, position.y);
+      s.mySound.rate(speed * s.state.speedScaler);
+    } else {
+      resetCircles();
     }
   };
 

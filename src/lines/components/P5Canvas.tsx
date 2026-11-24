@@ -2,6 +2,7 @@
 
 import { memo, useEffect, useRef } from "react";
 import p5, { whenSoundReady } from "@/lines/lib/sketches/p5Sound";
+import { silence } from "@/lines/lib/sketches/helpers/playPause";
 import type { AppState, Dispatch } from "@/lines/lib/state/types";
 import type { LinesSketch } from "@/lines/lib/sketches/types";
 
@@ -35,9 +36,9 @@ function P5CanvasImpl({
     const container = containerRef.current;
     if (!container) return undefined;
 
-    // p5's remove() is a no-op while preload() is still pending, so an
-    // instance torn down mid-load would otherwise still run setup() later
-    // and append an orphan canvas. Calling remove() at that point isn't an
+    // p5's remove() is a no-op until the instance has started, so one torn
+    // down before then would otherwise still run setup() later and append
+    // an orphan canvas. Calling remove() at that point isn't an
     // option either: p5.sound's remove hook disposes every sketch's sounds.
     let removed = false;
     const guardedSketch = (s: LinesSketch) => {
@@ -87,7 +88,13 @@ function P5CanvasImpl({
   }, [dispatch]);
 
   useEffect(() => {
-    if (instanceRef.current) instanceRef.current.p5playing = playing;
+    const instance = instanceRef.current;
+    if (!instance) return;
+    instance.p5playing = playing;
+    // A sketch left out of the current section stops running its play and
+    // pause logic, so nothing else would ever stop its sound: it played on,
+    // hidden, under later sections and through the Pause button.
+    if (!playing) silence(instance);
   }, [playing]);
 
   return <div ref={containerRef} className={className} />;

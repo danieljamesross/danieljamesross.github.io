@@ -57,3 +57,26 @@ test.describe("/lines/ once started", () => {
     await expectNoViolations(page);
   });
 });
+
+// Pages are checked at desktop size above; on phones the header has a menu
+// button instead of the nav, and the nav opens over the page.
+test.describe("at phone size", () => {
+  test.use({ viewport: { width: 390, height: 844 }, hasTouch: true });
+
+  test("the header has no accessibility violations", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.getByRole("button", { name: "Menu" })).toBeVisible();
+    await expectNoViolations(page);
+  });
+
+  test("the open menu has no accessibility violations", async ({ page }) => {
+    await page.goto("/");
+    await page.getByRole("button", { name: "Menu" }).click();
+    await expect(page.getByRole("dialog", { name: "Menu" })).toBeVisible();
+    // Check colours once the links have finished fading in.
+    await page.waitForFunction(() =>
+      document.getAnimations().every((a) => a.playState !== "running"),
+    );
+    await expectNoViolations(page);
+  });
+});
