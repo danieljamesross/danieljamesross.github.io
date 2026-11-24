@@ -127,7 +127,6 @@ export default function StructureEngine() {
     if (sectionNum === numSections) {
       dispatch({ type: "SET_PAUSE_GESTURE" });
       dispatch({ type: "END" });
-      new AudioContext().suspend();
     }
   }, [sectionNum, numSections, canvasScaler, dispatch]);
 
